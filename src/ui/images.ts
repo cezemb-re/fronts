@@ -109,3 +109,19 @@ export function calcWidth(
   const ratio = resolveRatio(aspectRatio, mode);
   return height * ratio;
 }
+
+export enum PlaceholderCategory {
+  ANY = 'any',
+  ANIMALS = 'animals',
+  ARCHITECTURE = 'architecture',
+  NATURE = 'nature',
+  PEOPLE = 'people',
+  TECH = 'tech',
+}
+
+export function placeIMG(
+  dimension: Dimension = { width: 600, height: 600, ratio: 1 },
+  placeholderCategory: PlaceholderCategory = PlaceholderCategory.ANY
+): string {
+  return `http://placeimg.com/${dimension.width}/${dimension.height}/${placeholderCategory}`;
+}

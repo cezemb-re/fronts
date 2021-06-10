@@ -41,10 +41,15 @@ import {
   Format,
   Image,
   useImageDimensions,
+  AspectRatio,
+  Mode,
   resolveRatio,
   calcHeight,
   calcWidth,
+  PlaceholderCategory,
+  placeIMG,
 } from './ui/images';
+import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 
 /**
  * State
@@ -96,6 +101,19 @@ export { useMeasure };
 
 export { useScrollProgress, useScrollThreshold, useScrollThresholds };
 
-export type { Dimension, Format, Image };
+export type {
+  Dimension,
+  Format,
+  Image,
+  AspectRatio,
+  Mode,
+  PlaceholderCategory,
+};
 
-export { useImageDimensions, resolveRatio, calcHeight, calcWidth };
+export { useImageDimensions, resolveRatio, calcHeight, calcWidth, placeIMG };
+
+/**
+ * Adapters
+ */
+
+export { formatRelativeDate, formatRelativeDateTime };
