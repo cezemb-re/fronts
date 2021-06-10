@@ -4,19 +4,12 @@ export type AnyState<K extends keyof any = keyof any> = Record<K, any>;
 
 export type ModelState<K extends keyof any = keyof any> = Record<K, AnyState>;
 
-export type ModuleState<K extends keyof any = keyof any> = Record<
-  K,
-  ModelState | AnyState
->;
-
-export type State<K extends keyof any = keyof any> = Record<K, ModuleState>;
-
 export type Merger<S extends AnyState = AnyState, P = any> = (
   state: S,
   payload: P
 ) => S;
 
-export interface Action<S extends State = State, P = any>
+export interface Action<S extends AnyState = AnyState, P = any>
   extends ReduxAction<string> {
   reducer: string;
   payload: P;

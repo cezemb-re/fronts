@@ -1,10 +1,10 @@
 import { useRef, useEffect } from 'react';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Action as ReduxAction, Reducer, Store } from 'redux';
+import { Action as ReduxAction, Dispatch, Reducer } from 'redux';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import env from './env';
-import { Merger, ModelState, State } from './state';
+import { Merger, ModelState } from './state';
 
 export type FormErrors<E extends keyof any = keyof any> = Partial<
   Record<'form' | E, string>
@@ -192,14 +192,14 @@ export interface FetchApiParams<S extends ApiState = ApiState, D = any> {
 }
 
 export async function fetchApi<
-  S extends ApiState = ApiState,
   D = any,
-  E extends keyof any = keyof any
+  E extends keyof any = keyof any,
+  S extends ApiState<D, E> = ApiState<D, E>
 >(
-  store: Store<State, ApiAction<S, D, E>>,
+  dispatch: Dispatch<ApiAction<S, D, E>>,
   params: FetchApiParams<S, D>
 ): Promise<D> {
-  store.dispatch({ reducer: params.reducer, type: params.type, pending: true });
+  dispatch({ reducer: params.reducer, type: params.type, pending: true });
 
   try {
     const response = await apiRequest({
@@ -210,7 +210,7 @@ export async function fetchApi<
 
     const data = response?.data as D;
 
-    store.dispatch({
+    dispatch({
       reducer: params.reducer,
       type: params.type,
       data,
@@ -219,7 +219,7 @@ export async function fetchApi<
 
     return data;
   } catch (error) {
-    store.dispatch({ reducer: params.reducer, type: params.type, error });
+    dispatch({ reducer: params.reducer, type: params.type, error });
     throw error;
   }
 }
@@ -265,7 +265,7 @@ export function useApi<
   E extends keyof any = keyof any,
   S extends ApiState<D, E> = ApiState<D, E>
 >(
-  store: Store<State, ApiAction<S, D, E>>,
+  dispatch: Dispatch<ApiAction<S, D, E>>,
   params: UseApiParams<S, D>
 ): ApiRequest<D, E> | null {
   const touched = useRef<boolean>(false);
@@ -292,7 +292,7 @@ export function useApi<
         memoizedBearerToken.current = params.bearer_token;
 
         try {
-          await fetchApi(store, params);
+          await fetchApi(dispatch, params);
         } catch (error) {
           // ...
         }
@@ -307,7 +307,11 @@ export function useApi<
     params.type,
     params.merger,
     params,
+    dispatch,
   ]);
 
-  return useApiRequest<D, E, S>({ reducer: params.reducer, type: params.type });
+  return useApiRequest<D, E, S>({
+    reducer: params.reducer,
+    type: params.type,
+  });
 }

@@ -2,8 +2,6 @@ import env, { Env, NativeEnv } from './state/env';
 import {
   AnyState,
   ModelState,
-  ModuleState,
-  State,
   Merger,
   Action,
   createReducer,
@@ -59,7 +57,7 @@ export type { Env, NativeEnv };
 
 export { env };
 
-export type { AnyState, ModelState, ModuleState, State, Merger, Action };
+export type { AnyState, ModelState, Merger, Action };
 
 export { createReducer };
 
