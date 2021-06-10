@@ -123,10 +123,10 @@ export enum HTTPMethod {
 export interface ApiRequestParams {
   route: string;
   method?: HTTPMethod;
-  params?: Record<any, any>;
+  params?: Record<keyof any, any>;
   bearer_token?: string;
   locale?: string;
-  body?: Body;
+  body?: Record<keyof any, any>;
 }
 
 export async function apiRequest(
