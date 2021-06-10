@@ -70,7 +70,6 @@ export type {
   ApiRequest,
   ApiState,
   ApiAction,
-  HTTPMethod,
   ApiRequestParams,
   FetchApiParams,
   UseApiRequestParams,
@@ -78,6 +77,7 @@ export type {
 };
 
 export {
+  HTTPMethod,
   createApiReducer,
   initialApiRequest,
   createRequestBody,
@@ -101,16 +101,19 @@ export { useMeasure };
 
 export { useScrollProgress, useScrollThreshold, useScrollThresholds };
 
-export type {
-  Dimension,
+export type { Dimension, Image };
+
+export {
+  useImageDimensions,
+  resolveRatio,
+  calcHeight,
+  calcWidth,
+  placeIMG,
   Format,
-  Image,
   AspectRatio,
   Mode,
   PlaceholderCategory,
 };
-
-export { useImageDimensions, resolveRatio, calcHeight, calcWidth, placeIMG };
 
 /**
  * Adapters
