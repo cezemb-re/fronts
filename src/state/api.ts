@@ -129,9 +129,9 @@ export interface ApiRequestParams {
   body?: Record<keyof any, any>;
 }
 
-export async function apiRequest(
+export async function apiRequest<D = any>(
   params: ApiRequestParams
-): Promise<AxiosResponse> {
+): Promise<AxiosResponse<D>> {
   const config: AxiosRequestConfig = {
     headers: {
       'X-Api-Key': env.API_KEY,
@@ -156,10 +156,10 @@ export async function apiRequest(
     switch (params.method) {
       default:
       case HTTPMethod.GET:
-        return await axios.get(`${env.API_HOST}${params.route}`, config);
+        return await axios.get<D>(`${env.API_HOST}${params.route}`, config);
 
       case HTTPMethod.POST:
-        return await axios.post(
+        return await axios.post<D>(
           `${env.API_HOST}${params.route}`,
           'body' in params && params.body
             ? createRequestBody(params.body)
@@ -168,13 +168,16 @@ export async function apiRequest(
         );
 
       case HTTPMethod.PUT:
-        return await axios.put(
+        return await axios.put<D>(
           `${env.API_HOST}${params.route}`,
           'body' in params && params.body
             ? createRequestBody(params.body)
             : null,
           config
         );
+
+      case HTTPMethod.DELETE:
+        return await axios.delete<D>(`${env.API_HOST}${params.route}`, config);
     }
   } catch (error) {
     throw error.response ? new ApiError(error.response.data) : error;
@@ -202,13 +205,13 @@ export async function fetchApi<
   dispatch({ reducer: params.reducer, type: params.type, pending: true });
 
   try {
-    const response = await apiRequest({
+    const response = await apiRequest<D>({
       route: params.route || `/${params.type}`,
       bearer_token: params.bearer_token,
       params: params.params,
     });
 
-    const data = response?.data as D;
+    const data = response?.data;
 
     dispatch({
       reducer: params.reducer,
