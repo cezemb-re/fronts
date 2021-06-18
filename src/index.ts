@@ -47,6 +47,7 @@ import {
   PlaceholderCategory,
   placeIMG,
 } from './ui/images';
+import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 
 /**
@@ -100,6 +101,10 @@ export { useMeasure };
 export { useScrollProgress, useScrollThreshold, useScrollThresholds };
 
 export type { Dimension, Image };
+
+export type { BreakPoint };
+
+export { useBreakPoint };
 
 export {
   useImageDimensions,
