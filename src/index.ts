@@ -102,9 +102,7 @@ export { useScrollProgress, useScrollThreshold, useScrollThresholds };
 
 export type { Dimension, Image };
 
-export type { BreakPoint };
-
-export { useBreakPoint };
+export { BreakPoint, useBreakPoint };
 
 export {
   useImageDimensions,
