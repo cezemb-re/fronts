@@ -49,6 +49,7 @@ import {
 } from './ui/images';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
+import useScript, { ScriptStatus } from './utils/script';
 
 /**
  * State
@@ -121,3 +122,11 @@ export {
  */
 
 export { formatRelativeDate, formatRelativeDateTime };
+
+/**
+ * Utils
+ */
+
+export { useScript };
+
+export type { ScriptStatus };

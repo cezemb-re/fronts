@@ -4,7 +4,11 @@ const scripts: HTMLScriptElement[] = [];
 
 export type ScriptStatus = [boolean, Error | null, boolean];
 
-export default function useScript(src: string, async = true, defer = true): ScriptStatus {
+export default function useScript(
+  src: string,
+  async = true,
+  defer = true
+): ScriptStatus {
   const [pending, setPending] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -17,7 +21,9 @@ export default function useScript(src: string, async = true, defer = true): Scri
   useEffect(() => {
     setPending(true);
 
-    const scriptIndex = scripts.findIndex((script: HTMLScriptElement) => script.src === src);
+    const scriptIndex = scripts.findIndex(
+      (script: HTMLScriptElement) => script.src === src
+    );
 
     if (scriptIndex !== -1) {
       const script = scripts[scriptIndex];
