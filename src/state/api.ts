@@ -236,7 +236,7 @@ export function useApiRequest<
   D = any,
   E extends keyof any = keyof any,
   S extends ApiState<D, E> = ApiState<D, E>
->(params: UseApiRequestParams): ApiRequest<D, E> | null {
+>(params: UseApiRequestParams): ApiRequest<D, E> | undefined {
   return useSelector<S, ApiRequest<D, E>>((state: S) => {
     const reducer = _.at<ModelState>(state, [params.reducer]);
 
@@ -249,7 +249,7 @@ export function useApiRequest<
       return reducer[0][params.type];
     }
 
-    return null;
+    return undefined;
   });
 }
 
@@ -270,7 +270,7 @@ export function useApi<
 >(
   dispatch: Dispatch<ApiAction<S, D, E>>,
   params: UseApiParams<S, D>
-): ApiRequest<D, E> | null {
+): ApiRequest<D, E> | undefined {
   const touched = useRef<boolean>(false);
   const memoizedRoute = useRef<string | null | undefined>(params.route);
   const memoizedParams = useRef<Record<any, any> | null | undefined>(
