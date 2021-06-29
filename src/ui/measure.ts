@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
 export interface Measure {
@@ -12,14 +12,14 @@ export interface Measure {
 }
 
 export default function useMeasure<T extends Element>(
-  ref: React.RefObject<T>,
+  ref: RefObject<T>
 ): Measure | undefined {
   const [measure, setMeasure] = useState<Measure | undefined>(undefined);
   const [resizeObserver] = useState(
     () =>
       new ResizeObserver(([entry]: ResizeObserverEntry[]): void => {
         setMeasure(entry.contentRect);
-      }),
+      })
   );
 
   useEffect(() => {
