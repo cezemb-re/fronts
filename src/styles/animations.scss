@@ -1,13 +1,9 @@
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-@keyframes appear {
+@keyframes fade-in {
   from {
     opacity: 0;
     visibility: hidden;
@@ -19,7 +15,7 @@
   }
 }
 
-@keyframes disappear {
+@keyframes fade-out {
   from {
     opacity: 1;
     visibility: visible;
@@ -29,4 +25,14 @@
     opacity: 0;
     visibility: hidden;
   }
+}
+
+@keyframes width-in {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes width-out {
+  from { width: 100%; }
+  to { width: 0; }
 }

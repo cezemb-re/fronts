@@ -1,4 +1,4 @@
-@import "node_modules/@cezembre/ui/lib/style";
+@use "~@cezembre/fronts/dist/containers";
 
 * {
     box-sizing: border-box;
@@ -10,26 +10,10 @@ body {
     .App {
         font-size: 14px;
 
-        > .header {
-            background: $color-background;
-            width: 100%;
-            padding: 20px;
-            @include border();
+        > .container {
+            @include containers.medium();
+            background: green;
         }
-
-        > .form {
-            @include container-medium();
-            margin-top: 30px;
-
-            > .title {
-                font-size: 1.3em;
-            }
-
-            > .composition {
-                font-size: 1.2em;
-            }
-        }
-
     }
 
 }
