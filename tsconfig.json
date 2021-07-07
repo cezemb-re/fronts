@@ -1,45 +1,16 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "target": "es6",
-    "module": "commonjs",
+    "target": "esnext", // Let Babel deal with transpiling new language features
+    "module": "esnext",
     "moduleResolution": "node",
-    "outDir": "./lib",
+    "jsx": "react-jsx",
     "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowJs": true,
-    "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
+    "removeComments": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "alwaysStrict": true,
     "esModuleInterop": true,
-    "rootDir": "./src",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    },
-    "jsx": "react-jsx"
+    "outDir": "./dist"
   },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "./node_modules",
-    "./example",
-  ],
-  "watchOptions": {
-    // Use native file system events for files and directories
-    "watchFile": "useFsEvents",
-    "watchDirectory": "useFsEvents",
-    // Poll files for updates more frequently
-    // when they're updated a lot.
-    "fallbackPolling": "dynamicPriority"
-  }
+  "include": ["./src"]
 }
