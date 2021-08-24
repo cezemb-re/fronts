@@ -40,7 +40,7 @@ import {
 } from './ui/images';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
-import useScript, { ScriptStatus } from './utils/script';
+import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
 
 /**
  * State
@@ -120,4 +120,4 @@ export { formatRelativeDate, formatRelativeDateTime };
 
 export { useScript };
 
-export type { ScriptStatus };
+export type { ScriptStatus, UseScriptOptions };
