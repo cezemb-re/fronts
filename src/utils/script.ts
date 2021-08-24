@@ -13,7 +13,7 @@ export interface UseScriptOptions {
 
 export default function useScript(
   src: string,
-  options: UseScriptOptions | undefined,
+  options: UseScriptOptions | undefined = undefined,
 ): ScriptStatus {
   const [pending, setPending] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -25,9 +25,22 @@ export default function useScript(
     const event = new CustomEvent('script-loaded', { detail: options });
     document.dispatchEvent(event);
     if (options?.callback) {
-      options?.callback(undefined);
+      options.callback(undefined);
     }
   }, [options]);
+
+  const onScriptError = useCallback(
+    (event: ErrorEvent) => {
+      const err = new Error(`${event.type}: ${event.message}`);
+      setError(err);
+      setPending(false);
+      setLoaded(true);
+      if (options?.callback) {
+        options.callback(err);
+      }
+    },
+    [options],
+  );
 
   useEffect(() => {
     setPending(true);
@@ -36,12 +49,6 @@ export default function useScript(
 
     if (scriptIndex !== -1) {
       const script = scripts[scriptIndex];
-
-      const onScriptError = (event: ErrorEvent) => {
-        setPending(false);
-        setLoaded(true);
-        setError(new Error(`${event.type}: ${event.message}`));
-      };
 
       script.addEventListener('load', onScriptLoad);
       script.addEventListener('error', onScriptError);
@@ -59,7 +66,7 @@ export default function useScript(
 
     scripts.push(script);
 
-    const onScriptError = (event: ErrorEvent) => {
+    const onError = (event: ErrorEvent) => {
       const index = scripts.findIndex((s) => s.src === src);
 
       if (index !== -1) {
@@ -67,22 +74,19 @@ export default function useScript(
       }
 
       script.remove();
-
-      setPending(false);
-      setLoaded(true);
-      setError(new Error(`${event.type}: ${event.message}`));
+      onScriptError(event);
     };
 
     script.addEventListener('load', onScriptLoad);
-    script.addEventListener('error', onScriptError);
+    script.addEventListener('error', onError);
 
     document.body.appendChild(script);
 
     return () => {
       script.removeEventListener('load', onScriptLoad);
-      script.removeEventListener('error', onScriptError);
+      script.removeEventListener('error', onError);
     };
-  }, [src, options, onScriptLoad]);
+  }, [src, options, onScriptLoad, onScriptError]);
 
   return [loaded, error, pending];
 }
