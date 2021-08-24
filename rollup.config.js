@@ -15,9 +15,13 @@ const { dependencies = {}, peerDependencies = {} } = pkg;
 
 const externals = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
 
+const src = path.resolve(__dirname, 'src');
+const input = path.resolve(src, 'index.ts');
+const dest = path.resolve(__dirname, 'dist');
+
 export default [
   {
-    input: path.resolve(__dirname, 'src/index.ts'),
+    input,
     external: (id) => externals.some((dep) => id === dep || id.startsWith(`${dep}/`)),
     plugins: [
       typescript(),
@@ -33,8 +37,8 @@ export default [
       }),
       copy({
         targets: [
-          { src: 'src/**/_*.scss.d.ts', dest: path.resolve(__dirname, 'dist') },
-          { src: 'src/**/_*.scss', dest: path.resolve(__dirname, 'dist') },
+          { src: 'src/**/_*.scss.d.ts', dest },
+          { src: 'src/**/_*.scss', dest },
         ],
       }),
     ],

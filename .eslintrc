@@ -42,7 +42,9 @@
     "no-underscore-dangle": "off",
     "react/button-has-type": "off",
     "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off"
   },
   "globals": {
     "Atomics": "readonly",

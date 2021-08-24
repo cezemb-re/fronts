@@ -1,29 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const scripts: HTMLScriptElement[] = [];
 
 export type ScriptStatus = [boolean, Error | null, boolean];
 
+export interface UseScriptOptions {
+  async?: boolean;
+  defer?: boolean;
+  callback?: (error: Error | undefined) => void;
+}
+
 export default function useScript(
   src: string,
-  async = true,
-  defer = true
+  options: UseScriptOptions | undefined,
 ): ScriptStatus {
   const [pending, setPending] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  function onScriptLoad() {
+  const onScriptLoad = useCallback(() => {
     setPending(false);
     setLoaded(true);
-  }
+    const event = new Event('script-loaded');
+    document.dispatchEvent(event);
+    if (options?.callback) {
+      options?.callback(undefined);
+    }
+  }, [options]);
 
   useEffect(() => {
     setPending(true);
 
-    const scriptIndex = scripts.findIndex(
-      (script: HTMLScriptElement) => script.src === src
-    );
+    const scriptIndex = scripts.findIndex((script: HTMLScriptElement) => script.src === src);
 
     if (scriptIndex !== -1) {
       const script = scripts[scriptIndex];
@@ -45,8 +53,8 @@ export default function useScript(
     const script = document.createElement('script');
 
     script.src = src;
-    script.async = async;
-    script.defer = defer;
+    script.async = options?.async !== undefined ? options?.async : true;
+    script.defer = options?.defer !== undefined ? options?.defer : true;
 
     scripts.push(script);
 
@@ -73,7 +81,7 @@ export default function useScript(
       script.removeEventListener('load', onScriptLoad);
       script.removeEventListener('error', onScriptError);
     };
-  }, [async, defer, src]);
+  }, [src, options, onScriptLoad]);
 
   return [loaded, error, pending];
 }
