@@ -1,72 +1,33 @@
 @use 'screens';
 
-$width: screens.$break-point-fourK - 200px;
-$width-fourK: screens.$break-point-desktop - 180px;
-$width-desktop: screens.$break-point-laptop-L - 160px;
-$width-laptop-L: screens.$break-point-laptop - 140px;
-$width-laptop: screens.$break-point-tablet - 120px;
-$width-tablet: screens.$break-point-tablet-S - 100px;
-$width-tablet-S: screens.$break-point-mobile-L - 60px;
-$width-mobile-L: calc(100% - 60px);
-$width-mobile-M: calc(100% - 40px);
-$width-mobile-S: calc(100% - 20px);
+$width-wide: screens.$break-point-laptop-L;
+$width-large: screens.$break-point-laptop;
+$width-medium: screens.$break-point-tablet;
+$width-small: screens.$break-point-tablet-S;
+$width-tiny: screens.$break-point-tablet-S;
 
-@mixin container($max-width: $width) {
-  width: $width-mobile-S;
-  max-width: $max-width;
+@mixin container($width: $width-wide, $padding: 20px) {
+  width: 100%;
+  max-width: $width;
   margin-left: auto;
   margin-right: auto;
+  padding-left: $padding;
+  padding-right: $padding;
   transition: max-width ease-out 200ms;
 }
 
-@mixin small($max-width: $width-tablet) {
-  @include container($max-width);
-
-  @include screens.mobile-L() {
-    max-width: $width-mobile-L;
-  }
-
-  @include screens.mobile-M() {
-    max-width: $width-mobile-M;
-  }
-
-  @include screens.mobile-S() {
-    max-width: $width-mobile-S;
-  }
+@mixin wide($padding: 20px) {
+  @include container($width-wide, $padding);
 }
 
-@mixin medium($max-width: $width-laptop-L) {
-  @include small($max-width);
-
-  @include screens.laptop() {
-    max-width: $width-laptop;
-  }
-
-  @include screens.tablet() {
-    max-width: $width-tablet;
-  }
-
-  @include screens.tablet-S() {
-    max-width: $width-tablet-S;
-  }
+@mixin large($padding: 20px) {
+  @include container($width-large, $padding);
 }
 
-@mixin large($max-width: $width-desktop) {
-  @include wide($max-width);
-
-  @include screens.laptop-L() {
-    max-width: $width-laptop-L;
-  }
+@mixin medium($padding: 20px) {
+  @include container($width-medium, $padding);
 }
 
-@mixin wide($max-width: $width) {
-  @include small($width);
-
-  @include screens.fourK() {
-    max-width: $width-fourK;
-  }
-
-  @include screens.desktop() {
-    max-width: $width-desktop;
-  }
+@mixin small($padding: 20px) {
+  @include container($width-small, $padding);
 }

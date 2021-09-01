@@ -12,9 +12,7 @@ export enum BreakPoint {
   MOBILE_S = 375,
 }
 
-export function useBreakPoint(
-  breakPoint: BreakPoint = BreakPoint.MOBILE_S
-): boolean {
+export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boolean {
   const [broke, setBroke] = useState<boolean>(false);
 
   const calcBreakingPoint = useCallback(() => {

@@ -22,7 +22,7 @@ export default function useScript(
   const onScriptLoad = useCallback(() => {
     setPending(false);
     setLoaded(true);
-    const event = new CustomEvent('script-loaded', { detail: options });
+    const event = new CustomEvent<UseScriptOptions>('script-loaded', { detail: options });
     document.dispatchEvent(event);
     if (options?.callback) {
       options.callback(undefined);

@@ -1,24 +1,24 @@
 import { useRef, useEffect } from 'react';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Action as ReduxAction, Dispatch, Reducer } from 'redux';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import env from './env';
 import { Merger, ModelState } from './state';
 
-export type FormErrors<E extends keyof any = keyof any> = Partial<
-  Record<'form' | E, string>
->;
+export type FormErrors<E extends keyof any = keyof any> = Partial<Record<'form' | E, string>>;
 
 export interface ApiErrorPrototype<E extends keyof any = keyof any> {
   code: string;
   status: number;
   form_errors?: FormErrors<E>;
-  state: any;
+  state?: any;
 }
 
-export class ApiError<E extends keyof any = keyof any> extends Error
-  implements ApiErrorPrototype<E> {
+export class ApiError<E extends keyof any = keyof any>
+  extends Error
+  implements ApiErrorPrototype<E>
+{
   code: string;
 
   status: number;
@@ -41,23 +41,18 @@ export interface ApiRequest<D = any, E extends keyof any = keyof any> {
   error?: ApiError<E> | Error;
 }
 
-export type ApiState<D = any, E extends keyof any = any> = Record<
-  keyof any,
-  ApiRequest<D, E>
->;
+export type ApiState<D = any, E extends keyof any = any> = Record<keyof any, ApiRequest<D, E>>;
 
-export interface ApiAction<
-  S extends ApiState = ApiState,
-  D = any,
-  E extends keyof any = keyof any
-> extends ApiRequest<D, E>, ReduxAction<string> {
+export interface ApiAction<S extends ApiState = ApiState, D = any, E extends keyof any = keyof any>
+  extends ApiRequest<D, E>,
+    ReduxAction<string> {
   reducer: string;
   merger?: Merger<S, D>;
 }
 
 export function createApiReducer<S extends ApiState = ApiState, D = any>(
   name: string,
-  initialState: S
+  initialState: S,
 ): Reducer<S, ApiAction<S, D>> {
   return (state: S = initialState, action: ApiAction<S, D>) => {
     if (name !== action.reducer) {
@@ -129,9 +124,7 @@ export interface ApiRequestParams {
   body?: Record<keyof any, any>;
 }
 
-export async function apiRequest<D = any>(
-  params: ApiRequestParams
-): Promise<AxiosResponse<D>> {
+export async function apiRequest<D = any>(params: ApiRequestParams): Promise<AxiosResponse<D>> {
   const config: AxiosRequestConfig = {
     headers: {
       'X-Api-Key': env.API_KEY,
@@ -161,26 +154,26 @@ export async function apiRequest<D = any>(
       case HTTPMethod.POST:
         return await axios.post<D>(
           `${env.API_HOST}${params.route}`,
-          'body' in params && params.body
-            ? createRequestBody(params.body)
-            : null,
-          config
+          'body' in params && params.body ? createRequestBody(params.body) : null,
+          config,
         );
 
       case HTTPMethod.PUT:
         return await axios.put<D>(
           `${env.API_HOST}${params.route}`,
-          'body' in params && params.body
-            ? createRequestBody(params.body)
-            : null,
-          config
+          'body' in params && params.body ? createRequestBody(params.body) : null,
+          config,
         );
 
       case HTTPMethod.DELETE:
         return await axios.delete<D>(`${env.API_HOST}${params.route}`, config);
     }
-  } catch (error) {
-    throw error.response ? new ApiError(error.response.data) : error;
+  } catch (error: unknown) {
+    if ((error as AxiosError)?.response?.data) {
+      throw new ApiError((error as AxiosError)?.response?.data);
+    } else {
+      throw error;
+    }
   }
 }
 
@@ -197,11 +190,8 @@ export interface FetchApiParams<S extends ApiState = ApiState, D = any> {
 export async function fetchApi<
   D = any,
   E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>
->(
-  dispatch: Dispatch<ApiAction<S, D, E>>,
-  params: FetchApiParams<S, D>
-): Promise<D> {
+  S extends ApiState<D, E> = ApiState<D, E>,
+>(dispatch: Dispatch<ApiAction<S, D, E>>, params: FetchApiParams<S, D>): Promise<D> {
   dispatch({ reducer: params.reducer, type: params.type, pending: true });
 
   try {
@@ -221,8 +211,8 @@ export async function fetchApi<
     });
 
     return data;
-  } catch (error) {
-    dispatch({ reducer: params.reducer, type: params.type, error });
+  } catch (error: unknown) {
+    dispatch({ reducer: params.reducer, type: params.type, error: error as ApiError });
     throw error;
   }
 }
@@ -235,7 +225,7 @@ export interface UseApiRequestParams {
 export function useApiRequest<
   D = any,
   E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>
+  S extends ApiState<D, E> = ApiState<D, E>,
 >(params: UseApiRequestParams): ApiRequest<D, E> | undefined {
   return useSelector<S, ApiRequest<D, E>>((state: S) => {
     const reducer = _.at<ModelState>(state, [params.reducer]);
@@ -266,19 +256,15 @@ export interface UseApiParams<S extends ApiState = ApiState, D = any> {
 export function useApi<
   D = any,
   E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>
+  S extends ApiState<D, E> = ApiState<D, E>,
 >(
   dispatch: Dispatch<ApiAction<S, D, E>>,
-  params: UseApiParams<S, D>
+  params: UseApiParams<S, D>,
 ): ApiRequest<D, E> | undefined {
   const touched = useRef<boolean>(false);
   const memoizedRoute = useRef<string | null | undefined>(params.route);
-  const memoizedParams = useRef<Record<any, any> | null | undefined>(
-    params.params
-  );
-  const memoizedBearerToken = useRef<string | null | undefined>(
-    params.bearer_token
-  );
+  const memoizedParams = useRef<Record<any, any> | null | undefined>(params.params);
+  const memoizedBearerToken = useRef<string | null | undefined>(params.bearer_token);
 
   useEffect(() => {
     (async () => {
