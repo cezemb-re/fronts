@@ -68,7 +68,7 @@ export function createApiReducer<S extends ApiState = ApiState, D = any>(
       },
     };
 
-    if (action.data) {
+    if (action.data !== undefined) {
       nextState[action.type].data =
         'merger' in action && action.merger
           ? action.merger(state[action.type].data, action.data)
