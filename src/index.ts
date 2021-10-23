@@ -1,15 +1,15 @@
 import './index.scss';
 import env, { Env, NativeEnv } from './state/env';
-import { AnyState, ModelState, Merger, Action, createReducer } from './state/state';
+import { DefaultState, Adapter, Action, createReducer } from './state/state';
 import {
   FormErrors,
   ApiErrorPrototype,
   ApiError,
-  ApiRequest,
-  ApiState,
+  ApiRequestState,
+  ApiModuleState,
+  DefaultApiState,
   ApiAction,
   createApiReducer,
-  initialApiRequest,
   createRequestBody,
   HTTPMethod,
   ApiRequestParams,
@@ -18,7 +18,6 @@ import {
   fetchApi,
   UseApiRequestParams,
   useApiRequest,
-  UseApiParams,
   useApi,
 } from './state/api';
 import Model from './state/model';
@@ -50,7 +49,7 @@ export type { Env, NativeEnv };
 
 export { env };
 
-export type { AnyState, ModelState, Merger, Action };
+export type { DefaultState, Adapter, Action };
 
 export { createReducer };
 
@@ -58,19 +57,18 @@ export type {
   FormErrors,
   ApiErrorPrototype,
   ApiError,
-  ApiRequest,
-  ApiState,
+  ApiRequestState,
+  ApiModuleState,
+  DefaultApiState,
   ApiAction,
   ApiRequestParams,
   FetchApiParams,
   UseApiRequestParams,
-  UseApiParams,
 };
 
 export {
   HTTPMethod,
   createApiReducer,
-  initialApiRequest,
   createRequestBody,
   apiRequest,
   fetchApi,

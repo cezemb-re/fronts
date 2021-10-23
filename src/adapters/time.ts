@@ -31,10 +31,7 @@ export function formatRelativeDate(time: string | DateTime): string {
   return result;
 }
 
-export function formatRelativeDateTime(
-  time: string | DateTime,
-  exactTime = true
-): string {
+export function formatRelativeDateTime(time: string | DateTime, exactTime = true): string {
   let parsedTime: DateTime;
 
   if (typeof time === 'string') {
@@ -49,9 +46,7 @@ export function formatRelativeDateTime(
     result += ' ';
   }
 
-  result += `${exactTime ? 'à' : 'vers'} ${parsedTime.toLocaleString(
-    DateTime.TIME_24_SIMPLE
-  )}`;
+  result += `${exactTime ? 'à' : 'vers'} ${parsedTime.toLocaleString(DateTime.TIME_24_SIMPLE)}`;
 
   return result;
 }

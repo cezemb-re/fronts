@@ -11,15 +11,13 @@ export interface Measure {
   height: number;
 }
 
-export default function useMeasure<T extends Element>(
-  ref: RefObject<T>
-): Measure | undefined {
+export default function useMeasure<T extends Element>(ref: RefObject<T>): Measure | undefined {
   const [measure, setMeasure] = useState<Measure | undefined>(undefined);
   const [resizeObserver] = useState(
     () =>
       new ResizeObserver(([entry]: ResizeObserverEntry[]): void => {
         setMeasure(entry.contentRect);
-      })
+      }),
   );
 
   useEffect(() => {

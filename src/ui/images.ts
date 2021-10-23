@@ -7,30 +7,21 @@ export interface Dimension {
   ratio: number;
 }
 
-export enum Format {
-  png = 'png',
-  jpg = 'jpg',
-  gif = 'gif',
-  unknown = 'unknown',
-}
+export type Format = 'png' | 'jpg' | 'gif' | 'unknown';
 
 export interface Image extends Model, Dimension {
-  format: Format | null;
-  url: string | null;
-  large_url: string | null;
-  medium_url: string | null;
-  small_url: string | null;
-  thumbnail_url: string | null;
+  format?: Format;
+  url?: string;
+  large_url?: string;
+  medium_url?: string;
+  small_url?: string;
+  thumbnail_url?: string;
 }
 
-export function useImageDimensions(
-  src: string | null | undefined
-): Dimension | undefined {
-  const [dimensions, setDimensions] = useState<Dimension | undefined>(
-    undefined
-  );
+export function useImageDimensions(src: string | null | undefined): Dimension | undefined {
+  const [dimensions, setDimensions] = useState<Dimension | undefined>(undefined);
 
-  function onImageLoad(this: any) {
+  function onImageLoad(this: HTMLImageElement) {
     setDimensions({
       width: this.width,
       height: this.height,
@@ -42,7 +33,7 @@ export function useImageDimensions(
     if (src) {
       const newImage = new Image();
       newImage.src = src;
-      newImage.onload = onImageLoad;
+      newImage.addEventListener('load', onImageLoad);
     }
   }, [src]);
 
@@ -64,10 +55,7 @@ export enum Mode {
   PORTRAIT = 'portrait',
 }
 
-export function resolveRatio(
-  aspectRatio: AspectRatio,
-  mode = Mode.LANDSCAPE
-): number {
+export function resolveRatio(aspectRatio: AspectRatio, mode = Mode.LANDSCAPE): number {
   let ratio;
   switch (aspectRatio) {
     case AspectRatio.SQUARE:
@@ -95,7 +83,7 @@ export function resolveRatio(
 export function calcHeight(
   width: number,
   aspectRatio = AspectRatio.SQUARE,
-  mode = Mode.LANDSCAPE
+  mode = Mode.LANDSCAPE,
 ): number {
   const ratio = resolveRatio(aspectRatio, mode);
   return width / ratio;
@@ -104,24 +92,17 @@ export function calcHeight(
 export function calcWidth(
   height: number,
   aspectRatio = AspectRatio.SQUARE,
-  mode = Mode.LANDSCAPE
+  mode = Mode.LANDSCAPE,
 ): number {
   const ratio = resolveRatio(aspectRatio, mode);
   return height * ratio;
 }
 
-export enum PlaceholderCategory {
-  ANY = 'any',
-  ANIMALS = 'animals',
-  ARCHITECTURE = 'architecture',
-  NATURE = 'nature',
-  PEOPLE = 'people',
-  TECH = 'tech',
-}
+export type PlaceholderCategory = 'any' | 'animals' | 'architecture' | 'nature' | 'people' | 'tech';
 
 export function placeIMG(
   dimension: Dimension = { width: 600, height: 600, ratio: 1 },
-  placeholderCategory: PlaceholderCategory = PlaceholderCategory.ANY
+  placeholderCategory: PlaceholderCategory = 'any',
 ): string {
   return `http://placeimg.com/${dimension.width}/${dimension.height}/${placeholderCategory}`;
 }

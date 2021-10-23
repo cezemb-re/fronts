@@ -50,9 +50,9 @@ export function useScrollThreshold(
 
 export function useScrollThresholds(
   thresholds = [0.25],
-  currentRef: RefObject<Element> | null = null,
+  currentRef?: RefObject<Element> | null,
 ): [RefObject<Element | null | undefined>, Array<boolean>, number, number] {
-  const [actives, setActives] = useState(Array(thresholds.length).fill(false));
+  const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
   const [ref, progress, progressPx] = useScrollProgress(currentRef);
 

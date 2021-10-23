@@ -1,32 +1,32 @@
 import { Action as ReduxAction, Reducer } from 'redux';
 
-export type AnyState<K extends keyof any = keyof any> = Record<K, any>;
-
-export type ModelState<K extends keyof any = keyof any> = Record<K, AnyState>;
-
-export type Merger<S extends AnyState = AnyState, P = any> = (state: S, payload: P) => S;
-
-export interface Action<S extends AnyState = AnyState, P = any> extends ReduxAction<string> {
-  reducer: string;
-  payload: P;
-  merger?: Merger<S, P>;
+export interface DefaultState {
+  [key: string]: unknown;
 }
 
-export function createReducer<S extends AnyState = AnyState, P = any>(
+export type Adapter<S = unknown, P = unknown> = (state: S, payload: P) => S;
+
+export interface Action<S extends DefaultState = DefaultState, P = unknown>
+  extends ReduxAction<keyof S> {
+  reducer: string;
+  payload: P;
+  adapter?: Adapter<P, P>;
+}
+
+export function createReducer<S extends DefaultState = DefaultState>(
   name: string,
   initialState: S,
-): Reducer<S, Action<S, P>> {
-  return (state: S = initialState, action: Action<S, P>) => {
+): Reducer<S, Action<S>> {
+  return (state: S = initialState, action: Action<S>) => {
     if (action.reducer !== name || typeof state !== 'object' || !state || !(action.type in state)) {
       return state;
     }
 
     return {
       ...state,
-      [action.type]:
-        'merger' in action && action.merger
-          ? action.merger(state[action.type], action.payload)
-          : action.payload,
+      [action.type]: action.adapter
+        ? action.adapter(state[action.type], action.payload)
+        : action.payload,
     };
   };
 }

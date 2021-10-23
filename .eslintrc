@@ -36,7 +36,8 @@
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "import/extensions": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "@typescript-eslint/no-floating-promises": "off"
   },
   "globals": {
     "Atomics": "readonly",

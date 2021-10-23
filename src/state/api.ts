@@ -1,60 +1,79 @@
 import { useRef, useEffect } from 'react';
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { Action as ReduxAction, Dispatch, Reducer } from 'redux';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import env from './env';
-import { Merger, ModelState } from './state';
+import { Adapter } from './state';
 
-export type FormErrors<E extends keyof any = keyof any> = Partial<Record<'form' | E, string>>;
-
-export interface ApiErrorPrototype<E extends keyof any = keyof any> {
-  code: string;
-  status: number;
-  form_errors?: FormErrors<E>;
-  state?: any;
+export interface FormErrors {
+  [field: string]: string;
 }
 
-export class ApiError<E extends keyof any = keyof any>
+export interface ApiErrorPrototype<F extends FormErrors = FormErrors> {
+  status?: number;
+  code?: string;
+  form_errors?: F;
+  state?: Record<string, unknown>;
+  message?: string;
+}
+
+export class ApiError<F extends FormErrors = FormErrors>
   extends Error
-  implements ApiErrorPrototype<E>
+  implements ApiErrorPrototype
 {
-  code: string;
+  status?: number;
 
-  status: number;
+  code?: string;
 
-  form_errors?: FormErrors<E>;
+  form_errors?: F;
 
-  state: any;
+  state?: Record<string, unknown>;
 
-  constructor(error: ApiErrorPrototype<E> & Error) {
+  constructor(error: ApiErrorPrototype<F>) {
     super(error.message);
-    this.code = error.code;
+
     this.status = error.status;
+    this.code = error.code;
     this.form_errors = error.form_errors;
+    this.state = error.state;
   }
 }
 
-export interface ApiRequest<D = any, E extends keyof any = keyof any> {
+export interface ApiRequestState<D = unknown, F extends FormErrors = FormErrors> {
   pending?: boolean;
   data?: D;
-  error?: ApiError<E> | Error;
+  error?: ApiError<F> | Error;
 }
 
-export type ApiState<D = any, E extends keyof any = any> = Record<keyof any, ApiRequest<D, E>>;
+export type ApiReducerState = {
+  [key: string]: ApiRequestState;
+};
 
-export interface ApiAction<S extends ApiState = ApiState, D = any, E extends keyof any = keyof any>
-  extends ApiRequest<D, E>,
-    ReduxAction<string> {
+export type ApiModuleState = {
+  [key: string]: ApiReducerState;
+};
+
+export type DefaultApiState = {
+  [key: string]: ApiModuleState;
+};
+
+export interface ApiAction<
+  S extends ApiReducerState = ApiReducerState,
+  D = unknown,
+  F extends FormErrors = FormErrors,
+  P = D,
+> extends ApiRequestState<D | P, F>,
+    ReduxAction<keyof S> {
   reducer: string;
-  merger?: Merger<S, D>;
+  merger?: Adapter<D, P>;
 }
 
-export function createApiReducer<S extends ApiState = ApiState, D = any>(
+export function createApiReducer<S extends ApiReducerState = ApiReducerState>(
   name: string,
   initialState: S,
-): Reducer<S, ApiAction<S, D>> {
-  return (state: S = initialState, action: ApiAction<S, D>) => {
+): Reducer<S, ApiAction<S>> {
+  return (state: S = initialState, action: ApiAction<S>) => {
     if (name !== action.reducer) {
       return state;
     }
@@ -69,21 +88,18 @@ export function createApiReducer<S extends ApiState = ApiState, D = any>(
     };
 
     if (action.data !== undefined) {
-      nextState[action.type].data =
-        'merger' in action && action.merger
-          ? action.merger(state[action.type].data, action.data)
-          : action.data;
+      nextState[action.type].data = action.merger
+        ? action.merger(state[action.type].data, action.data)
+        : action.data;
     }
 
     return nextState;
   };
 }
 
-export const initialApiRequest: ApiRequest = {
-  pending: false,
-};
+export type RequestBody = { [key: string]: unknown };
 
-export function createRequestBody(body: Record<any, any>): FormData {
+export function createRequestBody<B extends RequestBody = RequestBody>(body: B): FormData {
   const formData = new FormData();
 
   Object.entries(body).forEach(([param, value]) => {
@@ -107,95 +123,105 @@ export function createRequestBody(body: Record<any, any>): FormData {
   return formData;
 }
 
-export enum HTTPMethod {
-  GET = 'get',
-  POST = 'post',
-  PUT = 'put',
-  PATCH = 'patch',
-  DELETE = 'delete',
-}
+export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
+export type RequestParams = { [key: string]: unknown };
 
 export interface ApiRequestParams {
   route: string;
   method?: HTTPMethod;
-  params?: Record<keyof any, any>;
+  params?: RequestParams;
   bearer_token?: string;
   locale?: string;
-  body?: Record<keyof any, any>;
+  body?: RequestBody;
 }
 
-export async function apiRequest<D = any>(params: ApiRequestParams): Promise<AxiosResponse<D>> {
+export async function apiRequest<P = unknown, F extends FormErrors = FormErrors>(
+  params: ApiRequestParams,
+): Promise<AxiosResponse<P>> {
+  if (!env.API_HOST) {
+    throw new Error('Missing API host.');
+  }
+
+  const headers: AxiosRequestHeaders = {};
+
+  if (env.API_KEY) {
+    headers['X-Api-Key'] = env.API_KEY;
+  }
+
+  if (params.locale) {
+    headers['X-locale'] = params.locale;
+  }
+
+  if (params.bearer_token) {
+    headers.Authorization = `Bearer ${params.bearer_token}`;
+  }
+
   const config: AxiosRequestConfig = {
-    headers: {
-      'X-Api-Key': env.API_KEY,
-    },
+    headers,
   };
 
-  if (params) {
-    if ('locale' in params && params.locale !== undefined) {
-      config.headers['X-locale'] = params.locale;
-    }
-
-    if ('bearer_token' in params && params.bearer_token !== undefined) {
-      config.headers.Authorization = `Bearer ${params.bearer_token}`;
-    }
-
-    if ('params' in params && params.params !== undefined) {
-      config.params = params.params;
-    }
+  if (params.params) {
+    config.params = params.params;
   }
 
   try {
     switch (params.method) {
       default:
-      case HTTPMethod.GET:
-        return await axios.get<D>(`${env.API_HOST}${params.route}`, config);
+      case 'get':
+        return await axios.get<P>(`${env.API_HOST}${params.route}`, config);
 
-      case HTTPMethod.POST:
-        return await axios.post<D>(
+      case 'post':
+        return await axios.post<P>(
           `${env.API_HOST}${params.route}`,
-          'body' in params && params.body ? createRequestBody(params.body) : null,
+          params.body ? createRequestBody(params.body) : undefined,
           config,
         );
 
-      case HTTPMethod.PUT:
-        return await axios.put<D>(
+      case 'put':
+        return await axios.put<P>(
           `${env.API_HOST}${params.route}`,
-          'body' in params && params.body ? createRequestBody(params.body) : null,
+          params.body ? createRequestBody(params.body) : undefined,
           config,
         );
 
-      case HTTPMethod.DELETE:
-        return await axios.delete<D>(`${env.API_HOST}${params.route}`, config);
+      case 'delete':
+        return await axios.delete<P>(`${env.API_HOST}${params.route}`, config);
     }
   } catch (error: unknown) {
-    if ((error as AxiosError)?.response?.data) {
-      throw new ApiError((error as AxiosError)?.response?.data);
+    if (error && typeof error === 'object' && 'response' in error) {
+      const e = error as AxiosError<ApiErrorPrototype<F>>;
+      if (e.response?.data) {
+        throw new ApiError<F>(e.response.data);
+      } else {
+        throw new Error('Unknown error');
+      }
     } else {
       throw error;
     }
   }
 }
 
-export interface FetchApiParams<S extends ApiState = ApiState, D = any> {
+export interface FetchApiParams<D = unknown, P = D> {
   reducer: string;
   type: string;
   route?: string;
-  params?: Record<any, any>;
+  params?: RequestParams;
   bearer_token?: string;
-  merger?: Merger<S, D>;
+  adapter?: Adapter<D, P>;
   block?: boolean;
 }
 
 export async function fetchApi<
-  D = any,
-  E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>,
->(dispatch: Dispatch<ApiAction<S, D, E>>, params: FetchApiParams<S, D>): Promise<D> {
+  D = unknown,
+  F extends FormErrors = FormErrors,
+  S extends ApiReducerState = ApiReducerState,
+  P = D,
+>(dispatch: Dispatch<ApiAction<S, D, F, P>>, params: FetchApiParams<D, P>): Promise<P> {
   dispatch({ reducer: params.reducer, type: params.type, pending: true });
 
   try {
-    const response = await apiRequest<D>({
+    const response = await apiRequest<P, F>({
       route: params.route || `/${params.type}`,
       bearer_token: params.bearer_token,
       params: params.params,
@@ -207,12 +233,12 @@ export async function fetchApi<
       reducer: params.reducer,
       type: params.type,
       data,
-      merger: params.merger,
+      adapter: params.adapter,
     });
 
     return data;
   } catch (error: unknown) {
-    dispatch({ reducer: params.reducer, type: params.type, error: error as ApiError });
+    dispatch({ reducer: params.reducer, type: params.type, error: error as ApiError<F> });
     throw error;
   }
 }
@@ -223,47 +249,38 @@ export interface UseApiRequestParams {
 }
 
 export function useApiRequest<
-  D = any,
-  E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>,
->(params: UseApiRequestParams): ApiRequest<D, E> | undefined {
-  return useSelector<S, ApiRequest<D, E>>((state: S) => {
-    const reducer = _.at<ModelState>(state, [params.reducer]);
+  D = unknown,
+  F extends FormErrors = FormErrors,
+  S extends DefaultApiState = DefaultApiState,
+>(params: UseApiRequestParams): ApiRequestState<D, F> | undefined {
+  return useSelector<S, ApiRequestState<D, F> | undefined>((state: S) => {
+    const reducers = _.at<ApiModuleState>(state, [params.reducer]);
 
     if (
-      reducer.length &&
-      typeof reducer[0] === 'object' &&
-      reducer[0] &&
-      params.type in reducer[0]
+      reducers.length &&
+      typeof reducers[0] === 'object' &&
+      reducers[0] &&
+      params.type in reducers[0]
     ) {
-      return reducer[0][params.type];
+      return reducers[0][params.type];
     }
 
     return undefined;
   });
 }
 
-export interface UseApiParams<S extends ApiState = ApiState, D = any> {
-  reducer: string;
-  type: string;
-  route?: string;
-  params?: Record<keyof any, any>;
-  bearer_token?: string;
-  merger?: Merger<S, D>;
-  block?: boolean;
-}
-
 export function useApi<
-  D = any,
-  E extends keyof any = keyof any,
-  S extends ApiState<D, E> = ApiState<D, E>,
+  D = unknown,
+  F extends FormErrors = FormErrors,
+  S extends DefaultApiState = DefaultApiState,
+  P = D,
 >(
-  dispatch: Dispatch<ApiAction<S, D, E>>,
-  params: UseApiParams<S, D>,
-): ApiRequest<D, E> | undefined {
+  dispatch: Dispatch<ApiAction<S, D, F, P>>,
+  params: FetchApiParams<D, P>,
+): ApiRequestState<D> | undefined {
   const touched = useRef<boolean>(false);
   const memoizedRoute = useRef<string | null | undefined>(params.route);
-  const memoizedParams = useRef<Record<any, any> | null | undefined>(params.params);
+  const memoizedParams = useRef<RequestParams | null | undefined>(params.params);
   const memoizedBearerToken = useRef<string | null | undefined>(params.bearer_token);
 
   useEffect(() => {
@@ -281,7 +298,7 @@ export function useApi<
         memoizedBearerToken.current = params.bearer_token;
 
         try {
-          await fetchApi(dispatch, params);
+          await fetchApi<D, F, S, P>(dispatch, params);
         } catch (error) {
           // ...
         }
@@ -294,12 +311,12 @@ export function useApi<
     params.bearer_token,
     params.reducer,
     params.type,
-    params.merger,
+    params.adapter,
     params,
     dispatch,
   ]);
 
-  return useApiRequest<D, E, S>({
+  return useApiRequest<D, F, S>({
     reducer: params.reducer,
     type: params.type,
   });
