@@ -40,50 +40,39 @@ export function useImageDimensions(src: string | null | undefined): Dimension | 
   return dimensions;
 }
 
-export enum AspectRatio {
-  COVER = 'cover',
-  FIT = 'fit',
-  SQUARE = 'square',
-  AR5x4 = 'ar5x4',
-  AR4x3 = 'ar3x4',
-  AR3x2 = 'ar3x2',
-  AR19x9 = 'ar16x9',
-}
+export type AspectRatio = 'cover' | 'fit' | 'square' | 'ar5x4' | 'ar3x4' | 'ar3x2' | 'ar16x9';
 
-export enum Mode {
-  LANDSCAPE = 'landscape',
-  PORTRAIT = 'portrait',
-}
+export type Mode = 'landscape' | 'portrait';
 
-export function resolveRatio(aspectRatio: AspectRatio, mode = Mode.LANDSCAPE): number {
+export function resolveRatio(aspectRatio: AspectRatio, mode: Mode = 'landscape'): number {
   let ratio;
   switch (aspectRatio) {
-    case AspectRatio.SQUARE:
+    case 'square':
       ratio = 1;
       break;
-    case AspectRatio.AR5x4:
+    case 'ar5x4':
       ratio = 5 / 4;
       break;
-    case AspectRatio.AR4x3:
+    case 'ar3x4':
       ratio = 4 / 3;
       break;
-    case AspectRatio.AR3x2:
+    case 'ar3x2':
       ratio = 3 / 2;
       break;
-    case AspectRatio.AR19x9:
+    case 'ar16x9':
       ratio = 16 / 9;
       break;
     default:
       ratio = 1;
       break;
   }
-  return mode === Mode.PORTRAIT ? 1 / ratio : ratio;
+  return mode === 'portrait' ? 1 / ratio : ratio;
 }
 
 export function calcHeight(
   width: number,
-  aspectRatio = AspectRatio.SQUARE,
-  mode = Mode.LANDSCAPE,
+  aspectRatio: AspectRatio = 'square',
+  mode: Mode = 'landscape',
 ): number {
   const ratio = resolveRatio(aspectRatio, mode);
   return width / ratio;
@@ -91,8 +80,8 @@ export function calcHeight(
 
 export function calcWidth(
   height: number,
-  aspectRatio = AspectRatio.SQUARE,
-  mode = Mode.LANDSCAPE,
+  aspectRatio: AspectRatio = 'square',
+  mode: Mode = 'landscape',
 ): number {
   const ratio = resolveRatio(aspectRatio, mode);
   return height * ratio;

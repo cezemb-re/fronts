@@ -20,6 +20,8 @@ import {
   UseApiRequestParams,
   useApiRequest,
   useApi,
+  RequestBody,
+  RequestParams,
 } from './state/api';
 import Model from './state/model';
 import useClickOutside from './ui/clickOutside';
@@ -66,17 +68,12 @@ export type {
   ApiRequestParams,
   FetchApiParams,
   UseApiRequestParams,
+  RequestBody,
+  RequestParams,
+  HTTPMethod,
 };
 
-export {
-  HTTPMethod,
-  createApiReducer,
-  createRequestBody,
-  apiRequest,
-  fetchApi,
-  useApiRequest,
-  useApi,
-};
+export { createApiReducer, createRequestBody, apiRequest, fetchApi, useApiRequest, useApi };
 
 export type { Model };
 
@@ -96,17 +93,9 @@ export type { Dimension, Image };
 
 export { BreakPoint, useBreakPoint };
 
-export {
-  useImageDimensions,
-  resolveRatio,
-  calcHeight,
-  calcWidth,
-  placeIMG,
-  Format,
-  AspectRatio,
-  Mode,
-  PlaceholderCategory,
-};
+export { useImageDimensions, resolveRatio, calcHeight, calcWidth, placeIMG };
+
+export type { Format, AspectRatio, Mode, PlaceholderCategory };
 
 /**
  * Adapters
