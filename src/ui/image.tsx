@@ -112,10 +112,10 @@ export function calcWidth(
   return height * ratio;
 }
 
-export function getPlaceholderUrl(dimension: Dimension, color?: string): string {
-  return `https://via.placeholder.com/${dimension.width || 800}${
-    dimension.height ? `x${dimension.height}` : ''
-  }.png${color ? `/${color}` : ''}`;
+export function getPlaceholderUrl(width?: number, height?: number, color?: string): string {
+  return `https://via.placeholder.com/${width || 800}${height ? `x${height || 400}` : ''}.png${
+    color ? `/${color}` : ''
+  }`;
 }
 
 export interface Props {
@@ -126,7 +126,7 @@ export interface Props {
   aspectRatio?: AspectRatio;
   mode?: Mode;
   placeholder?: boolean;
-  borderRadius?: number;
+  placeholderColor?: string;
   objectFit?: Property.ObjectFit;
   objectPosition?: Property.ObjectPosition;
 }
@@ -139,17 +139,20 @@ export default function Img({
   aspectRatio = 'fit',
   mode = 'landscape',
   placeholder = false,
+  placeholderColor,
   objectFit = 'cover',
   objectPosition = 'center center',
 }: Props): ReactElement {
-  let trueSrc = src;
+  const resolvedSrc =
+    src || !placeholder
+      ? src
+      : getPlaceholderUrl(
+          typeof width !== 'string' ? width : undefined,
+          typeof height !== 'string' ? height : undefined,
+          placeholderColor,
+        );
 
-  if (!trueSrc && placeholder) {
-    trueSrc = getPlaceholderUrl({
-      width: typeof width === 'number' ? width : undefined,
-      height: typeof height === 'number' ? height : undefined,
-    });
-  }
+  const imageDimension = useImageDimensions(resolvedSrc);
 
   const [style, setStyle] = useState<CSSProperties>({
     width,
@@ -159,38 +162,37 @@ export default function Img({
   });
 
   const element = useRef<HTMLImageElement>(null);
-  const measure = useMeasure<HTMLImageElement>(element);
-  const image = useImageDimensions(trueSrc);
+  const elementMeasure = useMeasure<HTMLImageElement>(element);
 
   useEffect(() => {
-    if (image && measure) {
+    if (imageDimension && elementMeasure) {
       if (width && !height) {
         if (aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            height: measure.width / (image.ratio || 1),
+            height: elementMeasure.width / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            height: calcHeight(measure.width, aspectRatio, mode),
+            height: calcHeight(elementMeasure.width, aspectRatio, mode),
           }));
         }
       } else if (height && !width) {
         if (aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            width: measure.height / (image.ratio || 1),
+            width: elementMeasure.height / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            width: calcWidth(measure.height, aspectRatio, mode),
+            width: calcWidth(elementMeasure.height, aspectRatio, mode),
           }));
         }
       }
     }
-  }, [aspectRatio, height, image, measure, mode, width]);
+  }, [aspectRatio, height, imageDimension, elementMeasure, mode, width]);
 
-  return <img ref={element} src={trueSrc} alt={alt} style={style} />;
+  return <img ref={element} src={resolvedSrc} alt={alt} style={style} />;
 }
