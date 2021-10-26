@@ -27,7 +27,7 @@ import Model from './state/model';
 import useClickOutside from './ui/clickOutside';
 import useMeasure, { Measure } from './ui/measure';
 import { useScrollProgress, useScrollThreshold, useScrollThresholds } from './ui/scrollProgress';
-import {
+import Img, {
   Dimension,
   Format,
   Image,
@@ -37,9 +37,8 @@ import {
   resolveRatio,
   calcHeight,
   calcWidth,
-  PlaceholderCategory,
-  placeIMG,
-} from './ui/images';
+  getPlaceholderUrl,
+} from './ui/image';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
@@ -93,9 +92,9 @@ export type { Dimension, Image };
 
 export { BreakPoint, useBreakPoint };
 
-export { useImageDimensions, resolveRatio, calcHeight, calcWidth, placeIMG };
+export { useImageDimensions, resolveRatio, calcHeight, calcWidth, getPlaceholderUrl, Img };
 
-export type { Format, AspectRatio, Mode, PlaceholderCategory };
+export type { Format, AspectRatio, Mode };
 
 /**
  * Adapters
