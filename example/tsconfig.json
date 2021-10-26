@@ -23,7 +23,8 @@
       "esnext"
     ],
     "types": [
-      "react-scripts"
+      "react-scripts",
+      "googlemaps"
     ],
     "noEmit": true,
     "noFallthroughCasesInSwitch": true

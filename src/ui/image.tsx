@@ -165,26 +165,26 @@ export default function Img({
   const elementMeasure = useMeasure<HTMLImageElement>(element);
 
   useEffect(() => {
-    if (imageDimension && elementMeasure) {
+    if (elementMeasure) {
       if (width && !height) {
-        if (aspectRatio === 'fit') {
+        if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
             height: elementMeasure.width / (imageDimension.ratio || 1),
           }));
-        } else if (aspectRatio !== 'cover') {
+        } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
             height: calcHeight(elementMeasure.width, aspectRatio, mode),
           }));
         }
       } else if (height && !width) {
-        if (aspectRatio === 'fit') {
+        if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
             width: elementMeasure.height / (imageDimension.ratio || 1),
           }));
-        } else if (aspectRatio !== 'cover') {
+        } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
             width: calcWidth(elementMeasure.height, aspectRatio, mode),
@@ -194,5 +194,5 @@ export default function Img({
     }
   }, [aspectRatio, height, imageDimension, elementMeasure, mode, width]);
 
-  return <img ref={element} src={resolvedSrc} alt={alt} style={style} />;
+  return <img ref={element} loading="lazy" src={resolvedSrc} alt={alt} style={style} />;
 }

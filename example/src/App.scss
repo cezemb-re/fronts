@@ -1,41 +1,23 @@
 @use "~@cezembre/fronts/dist/containers";
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    margin: 0;
+  margin: 0;
 
-    .App {
-        font-size: 14px;
+  .App {
+    background: green;
+    > .container {
+      @include containers.wide();
+      background: red;
+      position: relative;
 
-        > .container {
-            margin-top: 30px;
-            color: white;
-
-            &.wide {
-                @include containers.wide();
-                background: blue;
-            }
-
-            &.large {
-                @include containers.large();
-                background: green;
-
-            }
-
-            &.medium {
-                @include containers.medium();
-                background: red;
-            }
-
-            &.small {
-                @include containers.small();
-                background: pink;
-            }
-
-        }
+      > a {
+        position: absolute;
+        bottom: 0
+      }
     }
-
+  }
 }

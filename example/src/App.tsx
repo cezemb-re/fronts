@@ -1,20 +1,14 @@
 import { ReactElement } from 'react';
 import './App.scss';
+import { Img } from '@cezembre/fronts';
+import cover from './cover.webp';
 
 export default function App(): ReactElement {
   return (
     <div className="App">
-      <div className="container wide">
-        <h1>Wide</h1>
-      </div>
-      <div className="container large">
-        <h1>Large</h1>
-      </div>
-      <div className="container medium">
-        <h1>Medium</h1>
-      </div>
-      <div className="container small">
-        <h1>Small</h1>
+      <div className="container">
+        <Img width="100%" aspectRatio="2.35:1" src={cover} />
+        <a href="https://google.com">Oui</a>
       </div>
     </div>
   );
