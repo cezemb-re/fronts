@@ -40,7 +40,18 @@ export function useImageDimensions(src: string | null | undefined): Dimension | 
   return dimensions;
 }
 
-export type AspectRatio = 'cover' | 'fit' | 'square' | 'ar5x4' | 'ar3x4' | 'ar3x2' | 'ar16x9';
+export type AspectRatio =
+  | 'cover'
+  | 'fit'
+  | 'square'
+  | '5:4'
+  | '4:3'
+  | '3:2'
+  | '16:10'
+  | '16:9'
+  | '1.85:1'
+  | '2.35:1'
+  | '2.76:1';
 
 export type Mode = 'landscape' | 'portrait';
 
@@ -50,17 +61,29 @@ export function resolveRatio(aspectRatio: AspectRatio, mode: Mode = 'landscape')
     case 'square':
       ratio = 1;
       break;
-    case 'ar5x4':
+    case '5:4':
       ratio = 5 / 4;
       break;
-    case 'ar3x4':
+    case '4:3':
       ratio = 4 / 3;
       break;
-    case 'ar3x2':
+    case '3:2':
       ratio = 3 / 2;
       break;
-    case 'ar16x9':
+    case '16:10':
+      ratio = 16 / 10;
+      break;
+    case '16:9':
       ratio = 16 / 9;
+      break;
+    case '1.85:1':
+      ratio = 1.85;
+      break;
+    case '2.35:1':
+      ratio = 2.35;
+      break;
+    case '2.76:1':
+      ratio = 2.76;
       break;
     default:
       ratio = 1;
