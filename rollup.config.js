@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy';
@@ -24,7 +24,7 @@ export default [
     input,
     external: (id) => externals.some((dep) => id === dep || id.startsWith(`${dep}/`)),
     plugins: [
-      typescript(),
+      typescript({ tsconfig: './tsconfig.json' }),
       commonjs(),
       json(),
       resolve({ browser: true }),

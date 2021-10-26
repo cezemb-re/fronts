@@ -1,4 +1,6 @@
 {
+  "include": ["./src"],
+  "exclude": ["dist"],
   "compilerOptions": {
     "target": "esnext", // Let Babel deal with transpiling new language features
     "module": "esnext",
@@ -10,7 +12,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "outDir": "./dist"
-  },
-  "include": ["./src"]
+    "outDir": "./dist",
+    "declarationDir": "."
+  }
 }
