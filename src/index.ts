@@ -33,7 +33,7 @@ import Img, {
   Image,
   useImageDimensions,
   AspectRatio,
-  Mode,
+  Orientation,
   resolveRatio,
   calcHeight,
   calcWidth,
@@ -94,7 +94,7 @@ export { BreakPoint, useBreakPoint };
 
 export { useImageDimensions, resolveRatio, calcHeight, calcWidth, getPlaceholderUrl, Img };
 
-export type { Format, AspectRatio, Mode };
+export type { Format, AspectRatio, Orientation };
 
 /**
  * Adapters

@@ -55,9 +55,12 @@ export type AspectRatio =
   | '2.35:1'
   | '2.76:1';
 
-export type Mode = 'landscape' | 'portrait';
+export type Orientation = 'landscape' | 'portrait';
 
-export function resolveRatio(aspectRatio: AspectRatio, mode: Mode = 'landscape'): number {
+export function resolveRatio(
+  aspectRatio: AspectRatio,
+  orientation: Orientation = 'landscape',
+): number {
   let ratio;
   switch (aspectRatio) {
     case 'square':
@@ -91,24 +94,24 @@ export function resolveRatio(aspectRatio: AspectRatio, mode: Mode = 'landscape')
       ratio = 1;
       break;
   }
-  return mode === 'portrait' ? 1 / ratio : ratio;
+  return orientation === 'portrait' ? 1 / ratio : ratio;
 }
 
 export function calcHeight(
   width: number,
   aspectRatio: AspectRatio = 'square',
-  mode: Mode = 'landscape',
+  orientation: Orientation = 'landscape',
 ): number {
-  const ratio = resolveRatio(aspectRatio, mode);
+  const ratio = resolveRatio(aspectRatio, orientation);
   return width / ratio;
 }
 
 export function calcWidth(
   height: number,
   aspectRatio: AspectRatio = 'square',
-  mode: Mode = 'landscape',
+  orientation: Orientation = 'landscape',
 ): number {
-  const ratio = resolveRatio(aspectRatio, mode);
+  const ratio = resolveRatio(aspectRatio, orientation);
   return height * ratio;
 }
 
@@ -124,7 +127,7 @@ export interface Props {
   width?: string | number;
   height?: string | number;
   aspectRatio?: AspectRatio;
-  mode?: Mode;
+  orientation?: Orientation;
   placeholder?: boolean;
   placeholderColor?: string;
   objectFit?: Property.ObjectFit;
@@ -137,7 +140,7 @@ export default function Img({
   width,
   height,
   aspectRatio = 'fit',
-  mode = 'landscape',
+  orientation = 'landscape',
   placeholder = false,
   placeholderColor,
   objectFit = 'cover',
@@ -175,7 +178,7 @@ export default function Img({
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            height: calcHeight(elementMeasure.width, aspectRatio, mode),
+            height: calcHeight(elementMeasure.width, aspectRatio, orientation),
           }));
         }
       } else if (height && !width) {
@@ -187,12 +190,12 @@ export default function Img({
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            width: calcWidth(elementMeasure.height, aspectRatio, mode),
+            width: calcWidth(elementMeasure.height, aspectRatio, orientation),
           }));
         }
       }
     }
-  }, [aspectRatio, height, imageDimension, elementMeasure, mode, width]);
+  }, [aspectRatio, height, imageDimension, elementMeasure, orientation, width]);
 
   return <img ref={element} loading="lazy" src={resolvedSrc} alt={alt} style={style} />;
 }
