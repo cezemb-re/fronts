@@ -7,8 +7,7 @@ export default function App(): ReactElement {
   return (
     <div className="App">
       <div className="container">
-        <Img width="100%" aspectRatio="2.35:1" src={cover} />
-        <a href="https://google.com">Oui</a>
+        <Img width="100%" aspectRatio="2.35:1" src={cover} backgroundColor="green" placeholder />
       </div>
     </div>
   );

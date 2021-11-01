@@ -37,7 +37,6 @@ import Img, {
   resolveRatio,
   calcHeight,
   calcWidth,
-  getPlaceholderUrl,
 } from './ui/image';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
@@ -92,7 +91,7 @@ export type { Dimension, Image };
 
 export { BreakPoint, useBreakPoint };
 
-export { useImageDimensions, resolveRatio, calcHeight, calcWidth, getPlaceholderUrl, Img };
+export { useImageDimensions, resolveRatio, calcHeight, calcWidth, Img };
 
 export type { Format, AspectRatio, Orientation };
 

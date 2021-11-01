@@ -1,7 +1,7 @@
-import { ReactElement, useState, useEffect, useRef, CSSProperties } from 'react';
+import { ReactElement, useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Property } from 'csstype';
 import Model from '../state/model';
-import useMeasure from './measure';
+import useMeasure, { Measure } from './measure';
 
 export interface Dimension {
   width?: number;
@@ -115,12 +115,6 @@ export function calcWidth(
   return height * ratio;
 }
 
-export function getPlaceholderUrl(width?: number, height?: number, color?: string): string {
-  return `https://via.placeholder.com/${width || 800}${height ? `x${height || 400}` : ''}.png${
-    color ? `/${color}` : ''
-  }`;
-}
-
 export interface Props {
   src?: string;
   alt?: string;
@@ -128,10 +122,10 @@ export interface Props {
   height?: string | number;
   aspectRatio?: AspectRatio;
   orientation?: Orientation;
-  placeholder?: boolean;
-  placeholderColor?: string;
   objectFit?: Property.ObjectFit;
   objectPosition?: Property.ObjectPosition;
+  backgroundColor?: Property.BackgroundColor;
+  placeholder?: boolean;
 }
 
 export default function Img({
@@ -141,61 +135,73 @@ export default function Img({
   height,
   aspectRatio = 'fit',
   orientation = 'landscape',
-  placeholder = false,
-  placeholderColor,
   objectFit = 'cover',
   objectPosition = 'center center',
-}: Props): ReactElement {
-  const resolvedSrc =
-    src || !placeholder
-      ? src
-      : getPlaceholderUrl(
-          typeof width !== 'string' ? width : undefined,
-          typeof height !== 'string' ? height : undefined,
-          placeholderColor,
-        );
-
-  const imageDimension = useImageDimensions(resolvedSrc);
+  backgroundColor,
+  placeholder,
+}: Props): ReactElement | null {
+  const imageDimension = useImageDimensions(src);
 
   const [style, setStyle] = useState<CSSProperties>({
     width,
     height,
     objectFit,
     objectPosition,
+    backgroundColor,
   });
 
-  const element = useRef<HTMLImageElement>(null);
-  const elementMeasure = useMeasure<HTMLImageElement>(element);
-
-  useEffect(() => {
-    if (elementMeasure) {
+  const computeMeasure = useCallback(
+    (measure: Measure) => {
       if (width && !height) {
         if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            height: elementMeasure.width / (imageDimension.ratio || 1),
+            height: measure.width / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            height: calcHeight(elementMeasure.width, aspectRatio, orientation),
+            height: calcHeight(measure.width, aspectRatio, orientation),
           }));
         }
       } else if (height && !width) {
         if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            width: elementMeasure.height / (imageDimension.ratio || 1),
+            width: measure.height / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            width: calcWidth(elementMeasure.height, aspectRatio, orientation),
+            width: calcWidth(measure.height, aspectRatio, orientation),
           }));
         }
       }
-    }
-  }, [aspectRatio, height, imageDimension, elementMeasure, orientation, width]);
+    },
+    [aspectRatio, height, imageDimension, orientation, width],
+  );
 
-  return <img ref={element} loading="lazy" src={resolvedSrc} alt={alt} style={style} />;
+  const img = useRef<HTMLImageElement>(null);
+  const imgMeasure = useMeasure<HTMLImageElement>(img);
+
+  const div = useRef<HTMLDivElement>(null);
+  const divMeasure = useMeasure<HTMLDivElement>(div);
+
+  useEffect(() => {
+    if (imgMeasure) {
+      computeMeasure(imgMeasure);
+    } else if (divMeasure) {
+      computeMeasure(divMeasure);
+    }
+  }, [computeMeasure, divMeasure, imgMeasure]);
+
+  if (src) {
+    return <img ref={img} loading="lazy" src={src} alt={alt} style={style} />;
+  }
+
+  if (placeholder) {
+    return <div ref={div} style={style} />;
+  }
+
+  return null;
 }
