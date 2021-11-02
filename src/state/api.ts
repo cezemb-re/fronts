@@ -66,7 +66,7 @@ export interface ApiAction<
 > extends ApiRequestState<D | P, F>,
     ReduxAction<keyof S> {
   reducer: string;
-  merger?: Adapter<D, P>;
+  adapter?: Adapter<D, P>;
 }
 
 export function createApiReducer<S extends ApiReducerState = ApiReducerState>(
@@ -88,8 +88,8 @@ export function createApiReducer<S extends ApiReducerState = ApiReducerState>(
     };
 
     if (action.data !== undefined) {
-      nextState[action.type].data = action.merger
-        ? action.merger(state[action.type].data, action.data)
+      nextState[action.type].data = action.adapter
+        ? action.adapter(state[action.type].data, action.data)
         : action.data;
     }
 
