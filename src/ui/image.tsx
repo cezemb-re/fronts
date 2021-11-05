@@ -196,7 +196,7 @@ export default function Img({
   }, [computeMeasure, divMeasure, imgMeasure]);
 
   if (src) {
-    return <img ref={img} loading="lazy" src={src} alt={alt} style={style} />;
+    return <img ref={img} src={src} alt={alt} style={style} />;
   }
 
   if (placeholder) {
