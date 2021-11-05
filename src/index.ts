@@ -45,7 +45,7 @@ import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geo
 import {
   useGoogleMapsApi,
   useAutocompleteService,
-  PredictionType,
+  PlacePredictionType,
   usePlacePredictions,
   usePlaceDetails,
   usePlaceDetailsGetter,
@@ -124,7 +124,6 @@ export {
   usePlacePredictions,
   usePlaceDetails,
   usePlaceDetailsGetter,
-  PredictionType,
 };
 
-export type { ScriptStatus, UseScriptOptions, GeoLocation, Place };
+export type { ScriptStatus, UseScriptOptions, GeoLocation, Place, PlacePredictionType };

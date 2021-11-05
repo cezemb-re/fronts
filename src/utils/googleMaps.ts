@@ -66,7 +66,7 @@ export function usePlacesService(): RefObject<PlacesService | undefined> {
 
 type GetPlacePrediction = (input: string) => void;
 
-export type PredictionType =
+export type PlacePredictionType =
   | 'geocode'
   | 'address'
   | 'establishment'
@@ -79,7 +79,7 @@ export type PredictionType =
 
 export function usePlacePredictions(
   query?: string | number | null,
-  types: PredictionType[] = ['geocode'],
+  types: PlacePredictionType[] = ['geocode'],
   country = 'fr',
   callback?: (result: AutocompletePrediction[]) => void,
 ): AutocompletePrediction[] {
