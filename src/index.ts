@@ -41,6 +41,16 @@ import Img, {
 import { BreakPoint, useBreakPoint } from './ui/container';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
+import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geoLocation';
+import {
+  useGoogleMapsApi,
+  useAutocompleteService,
+  PredictionType,
+  usePlacePredictions,
+  usePlaceDetails,
+  usePlaceDetailsGetter,
+} from './utils/googleMaps';
+import Place from './utils/place';
 
 /**
  * State
@@ -105,6 +115,16 @@ export { formatRelativeDate, formatRelativeDateTime };
  * Utils
  */
 
-export { useScript };
+export {
+  useScript,
+  serializeGeoLocation,
+  parseGeoLocation,
+  useGoogleMapsApi,
+  useAutocompleteService,
+  usePlacePredictions,
+  usePlaceDetails,
+  usePlaceDetailsGetter,
+  PredictionType,
+};
 
-export type { ScriptStatus, UseScriptOptions };
+export type { ScriptStatus, UseScriptOptions, GeoLocation, Place };
