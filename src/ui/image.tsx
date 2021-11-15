@@ -1,7 +1,7 @@
 import { ReactElement, useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Property } from 'csstype';
+import ResizeObserver from 'resize-observer-polyfill';
 import Model from '../state/model';
-import useDOMRect from './domRect';
 
 export interface Dimension {
   width?: number;
@@ -150,8 +150,39 @@ export default function Img({
     backgroundColor,
   });
 
-  const computeDOMRect = useCallback(
-    (DOMRect: DOMRectReadOnly) => {
+  const [DOMRect, setDOMRect] = useState<DOMRect | DOMRectReadOnly | undefined>();
+
+  const resizeObserver = useRef<ResizeObserver | undefined>();
+
+  useEffect(() => {
+    if (!resizeObserver.current) {
+      resizeObserver.current = new ResizeObserver(([entry]: ResizeObserverEntry[]): void => {
+        setDOMRect(entry.contentRect);
+      });
+    }
+
+    return () => {
+      resizeObserver.current?.disconnect();
+      resizeObserver.current = undefined;
+    };
+  }, []);
+
+  const img = useCallback((element: HTMLImageElement | null) => {
+    if (element) {
+      setDOMRect(element.getBoundingClientRect());
+      resizeObserver.current?.observe(element);
+    }
+  }, []);
+
+  const div = useCallback((element: HTMLDivElement | null) => {
+    if (element) {
+      setDOMRect(element.getBoundingClientRect());
+      resizeObserver.current?.observe(element);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (DOMRect) {
       if (width && !height) {
         if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
@@ -177,23 +208,8 @@ export default function Img({
           }));
         }
       }
-    },
-    [aspectRatio, height, imageDimension, orientation, width],
-  );
-
-  const img = useRef<HTMLImageElement>(null);
-  const imgDOMRect = useDOMRect<HTMLImageElement>(img);
-
-  const div = useRef<HTMLDivElement>(null);
-  const divDOMRect = useDOMRect<HTMLDivElement>(div);
-
-  useEffect(() => {
-    if (imgDOMRect) {
-      computeDOMRect(imgDOMRect);
-    } else if (divDOMRect) {
-      computeDOMRect(divDOMRect);
     }
-  }, [computeDOMRect, divDOMRect, imgDOMRect]);
+  }, [aspectRatio, DOMRect, height, imageDimension, orientation, width]);
 
   if (src) {
     return <img ref={img} src={src} alt={alt} style={style} />;
