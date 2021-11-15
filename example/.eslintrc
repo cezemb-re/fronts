@@ -1,4 +1,8 @@
 {
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -8,38 +12,49 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
-  },
   "extends": [
     "airbnb",
     "airbnb-typescript",
     "airbnb/hooks",
+    "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:react/jsx-runtime",
     "prettier",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": [
+    "react",
+    "@typescript-eslint"
+  ],
   "rules": {
-    "prettier/prettier": ["error"],
+    "prettier/prettier": [
+      "error"
+    ],
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     ],
     "no-underscore-dangle": "off",
-    "react/button-has-type": "off",
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "import/extensions": "off",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",
-    "@typescript-eslint/no-floating-promises": "off",
-    "no-nested-ternary": "off"
+    "react/function-component-definition": [1, {
+      "namedComponents": "function-declaration",
+      "unnamedComponents": "arrow-function"
+    }],
+    "react/no-arrow-function-lifecycle": "off",
+    "react/no-invalid-html-attribute": "off",
+    "react/no-unused-class-component-methods": "off"
   },
   "globals": {
     "Atomics": "readonly",

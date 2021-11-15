@@ -25,7 +25,7 @@ import {
 } from './state/api';
 import Model from './state/model';
 import useClickOutside from './ui/clickOutside';
-import useMeasure, { Measure } from './ui/measure';
+import useDOMRect from './ui/domRect';
 import { useScrollProgress, useScrollThreshold, useScrollThresholds } from './ui/scrollProgress';
 import Img, {
   Dimension,
@@ -92,9 +92,7 @@ export type { Model };
 
 export { useClickOutside };
 
-export type { Measure };
-
-export { useMeasure };
+export { useDOMRect };
 
 export { useScrollProgress, useScrollThreshold, useScrollThresholds };
 

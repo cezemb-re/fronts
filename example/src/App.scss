@@ -10,6 +10,7 @@ body {
   .App {
     > .container {
       @include containers.wide();
+      background: green;
     }
   }
 }

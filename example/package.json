@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cezembre/fronts": "file:../",
+    "@cezembre/ui": "^0.8.0",
     "axios": "^0.24.0",
     "luxon": "^2.1.1",
     "react": "file:../node_modules/react",

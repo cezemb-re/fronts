@@ -1,7 +1,7 @@
 import { ReactElement, useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Property } from 'csstype';
 import Model from '../state/model';
-import useMeasure, { Measure } from './measure';
+import useDOMRect from './domRect';
 
 export interface Dimension {
   width?: number;
@@ -150,30 +150,30 @@ export default function Img({
     backgroundColor,
   });
 
-  const computeMeasure = useCallback(
-    (measure: Measure) => {
+  const computeDOMRect = useCallback(
+    (DOMRect: DOMRectReadOnly) => {
       if (width && !height) {
         if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            height: measure.width / (imageDimension.ratio || 1),
+            height: DOMRect.width / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            height: calcHeight(measure.width, aspectRatio, orientation),
+            height: calcHeight(DOMRect.width, aspectRatio, orientation),
           }));
         }
       } else if (height && !width) {
         if (imageDimension && aspectRatio === 'fit') {
           setStyle((s) => ({
             ...s,
-            width: measure.height / (imageDimension.ratio || 1),
+            width: DOMRect.height / (imageDimension.ratio || 1),
           }));
         } else if (aspectRatio !== 'fit' && aspectRatio !== 'cover') {
           setStyle((s) => ({
             ...s,
-            width: calcWidth(measure.height, aspectRatio, orientation),
+            width: calcWidth(DOMRect.height, aspectRatio, orientation),
           }));
         }
       }
@@ -182,18 +182,18 @@ export default function Img({
   );
 
   const img = useRef<HTMLImageElement>(null);
-  const imgMeasure = useMeasure<HTMLImageElement>(img);
+  const imgDOMRect = useDOMRect<HTMLImageElement>(img);
 
   const div = useRef<HTMLDivElement>(null);
-  const divMeasure = useMeasure<HTMLDivElement>(div);
+  const divDOMRect = useDOMRect<HTMLDivElement>(div);
 
   useEffect(() => {
-    if (imgMeasure) {
-      computeMeasure(imgMeasure);
-    } else if (divMeasure) {
-      computeMeasure(divMeasure);
+    if (imgDOMRect) {
+      computeDOMRect(imgDOMRect);
+    } else if (divDOMRect) {
+      computeDOMRect(divDOMRect);
     }
-  }, [computeMeasure, divMeasure, imgMeasure]);
+  }, [computeDOMRect, divDOMRect, imgDOMRect]);
 
   if (src) {
     return <img ref={img} src={src} alt={alt} style={style} />;
