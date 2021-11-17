@@ -42,7 +42,7 @@ export class ApiError<F extends FormErrors = FormErrors>
 
 export interface ApiRequestState<D = unknown, F extends FormErrors = FormErrors> {
   pending?: boolean;
-  data?: D | null;
+  data?: D;
   error?: ApiError<F> | Error;
 }
 
@@ -63,18 +63,18 @@ export interface ApiAction<
   D = unknown,
   F extends FormErrors = FormErrors,
   P = D,
-> extends ApiRequestState<D | P, F>,
+> extends ApiRequestState<D | P | null, F>,
     ReduxAction<keyof S> {
   reducer: string;
-  adapter?: Adapter<D, P>;
+  adapter?: Adapter<D, P | null>;
 }
 
 export function createApiReducer<S extends ApiReducerState = ApiReducerState>(
   name: string,
   initialState: S,
 ): Reducer<S, ApiAction<S>> {
-  return (state: S = initialState, action: ApiAction<S>) => {
-    if (name !== action.reducer) {
+  return (state: S = initialState, action?: ApiAction<S>) => {
+    if (!action || name !== action.reducer) {
       return state;
     }
 
@@ -210,7 +210,7 @@ export interface FetchApiParams<D = unknown, P = D> {
   route?: string;
   params?: RequestParams;
   bearer_token?: string;
-  adapter?: Adapter<D, P>;
+  adapter?: Adapter<D, P | null>;
   block?: boolean;
   clear_data_on_error?: boolean;
 }
