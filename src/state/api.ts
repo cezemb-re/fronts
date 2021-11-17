@@ -42,7 +42,7 @@ export class ApiError<F extends FormErrors = FormErrors>
 
 export interface ApiRequestState<D = unknown, F extends FormErrors = FormErrors> {
   pending?: boolean;
-  data?: D;
+  data?: D | null;
   error?: ApiError<F> | Error;
 }
 
@@ -167,7 +167,6 @@ export async function apiRequest<P = unknown, F extends FormErrors = FormErrors>
 
   try {
     switch (params.method) {
-      default:
       case 'get':
         return await axios.get<P>(`${env.API_HOST}${params.route}`, config);
 
@@ -187,6 +186,9 @@ export async function apiRequest<P = unknown, F extends FormErrors = FormErrors>
 
       case 'delete':
         return await axios.delete<P>(`${env.API_HOST}${params.route}`, config);
+
+      default:
+        return await axios.get<P>(`${env.API_HOST}${params.route}`, config);
     }
   } catch (error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
@@ -210,6 +212,7 @@ export interface FetchApiParams<D = unknown, P = D> {
   bearer_token?: string;
   adapter?: Adapter<D, P>;
   block?: boolean;
+  clear_data_on_error?: boolean;
 }
 
 export async function fetchApi<
@@ -238,7 +241,12 @@ export async function fetchApi<
 
     return data;
   } catch (error: unknown) {
-    dispatch({ reducer: params.reducer, type: params.type, error: error as ApiError<F> });
+    dispatch({
+      reducer: params.reducer,
+      type: params.type,
+      error: error as ApiError<F>,
+      data: params.clear_data_on_error ? null : undefined,
+    });
     throw error;
   }
 }
