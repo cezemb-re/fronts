@@ -39,7 +39,7 @@ function parseEnv(): Env {
 
   if (windowEnv.DOMAIN_NAME !== undefined) {
     env.DOMAIN_NAME = windowEnv.DOMAIN_NAME;
-  } else if (processEnv.DOMAIN_NAME !== undefined) {
+  } else if (processEnv.REACT_APP_DOMAIN_NAME !== undefined) {
     env.DOMAIN_NAME = processEnv.REACT_APP_DOMAIN_NAME;
   }
 
