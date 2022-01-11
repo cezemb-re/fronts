@@ -9,16 +9,18 @@ declare global {
 }
 
 export interface Env {
+  SERVER_NAME?: string;
+  DOMAIN_NAME?: string;
+  ENV_NAME?: string;
+
   RELEASE_VERSION?: string;
 
   NODE_APP_INSTANCE?: number;
-  SERVER_NAME?: string;
   DEFAULT_TIME_ZONE?: string;
   DEFAULT_LOCALE?: string;
   DEFAULT_REGION_CODE?: string;
   DEFAULT_CURRENCY?: string;
 
-  ENV_NAME?: string;
   API_HOST?: string;
   API_KEY?: string;
 }
@@ -28,6 +30,26 @@ function parseEnv(): Env {
   const windowEnv: NativeEnv = window.env ? window.env : {};
 
   const env: Env = {};
+
+  if (windowEnv.SERVER_NAME !== undefined) {
+    env.SERVER_NAME = windowEnv.SERVER_NAME;
+  } else if (processEnv.REACT_APP_SERVER_NAME !== undefined) {
+    env.SERVER_NAME = processEnv.REACT_APP_SERVER_NAME;
+  }
+
+  if (windowEnv.DOMAIN_NAME !== undefined) {
+    env.DOMAIN_NAME = windowEnv.DOMAIN_NAME;
+  } else if (processEnv.DOMAIN_NAME !== undefined) {
+    env.DOMAIN_NAME = processEnv.REACT_APP_DOMAIN_NAME;
+  }
+
+  if (windowEnv.ENV_NAME !== undefined) {
+    env.ENV_NAME = windowEnv.ENV_NAME;
+  } else if (processEnv.ENV_NAME !== undefined) {
+    env.ENV_NAME = processEnv.ENV_NAME;
+  } else if (processEnv.NODE_ENV !== undefined) {
+    env.ENV_NAME = processEnv.NODE_ENV;
+  }
 
   if (windowEnv.RELEASE_VERSION !== undefined) {
     env.RELEASE_VERSION = windowEnv.RELEASE_VERSION;
@@ -39,12 +61,6 @@ function parseEnv(): Env {
     env.NODE_APP_INSTANCE = parseInt(windowEnv.NODE_APP_INSTANCE, 10);
   } else if (processEnv.REACT_APP_NODE_APP_INSTANCE !== undefined) {
     env.NODE_APP_INSTANCE = parseInt(processEnv.REACT_APP_NODE_APP_INSTANCE, 10);
-  }
-
-  if (windowEnv.SERVER_NAME !== undefined) {
-    env.SERVER_NAME = windowEnv.SERVER_NAME;
-  } else if (processEnv.REACT_APP_SERVER_NAME !== undefined) {
-    env.SERVER_NAME = processEnv.REACT_APP_SERVER_NAME;
   }
 
   if (windowEnv.DEFAULT_TIME_ZONE !== undefined) {
@@ -69,14 +85,6 @@ function parseEnv(): Env {
     env.DEFAULT_CURRENCY = windowEnv.DEFAULT_CURRENCY;
   } else if (processEnv.REACT_APP_DEFAULT_CURRENCY !== undefined) {
     env.DEFAULT_CURRENCY = processEnv.REACT_APP_DEFAULT_CURRENCY;
-  }
-
-  if (windowEnv.ENV_NAME !== undefined) {
-    env.ENV_NAME = windowEnv.ENV_NAME;
-  } else if (processEnv.ENV_NAME !== undefined) {
-    env.ENV_NAME = processEnv.ENV_NAME;
-  } else if (processEnv.NODE_ENV !== undefined) {
-    env.ENV_NAME = processEnv.NODE_ENV;
   }
 
   if (windowEnv.API_HOST !== undefined) {
