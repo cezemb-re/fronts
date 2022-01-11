@@ -154,32 +154,24 @@ export default function Img({
 
   const resizeObserver = useRef<ResizeObserver | undefined>();
 
-  useEffect(() => {
+  const observeElement = useCallback((element: HTMLElement) => {
     if (!resizeObserver.current) {
       resizeObserver.current = new ResizeObserver(([entry]: ResizeObserverEntry[]): void => {
         setDOMRect(entry.contentRect);
       });
     }
-
-    return () => {
-      resizeObserver.current?.disconnect();
-      resizeObserver.current = undefined;
-    };
+    resizeObserver.current?.observe(element);
   }, []);
 
-  const img = useCallback((element: HTMLImageElement | null) => {
-    if (element) {
-      setDOMRect(element.getBoundingClientRect());
-      resizeObserver.current?.observe(element);
-    }
-  }, []);
-
-  const div = useCallback((element: HTMLDivElement | null) => {
-    if (element) {
-      setDOMRect(element.getBoundingClientRect());
-      resizeObserver.current?.observe(element);
-    }
-  }, []);
+  const ref = useCallback(
+    (element: HTMLImageElement | HTMLDivElement | null) => {
+      if (element) {
+        setDOMRect(element.getBoundingClientRect());
+        observeElement(element);
+      }
+    },
+    [observeElement],
+  );
 
   useEffect(() => {
     if (DOMRect) {
@@ -211,12 +203,19 @@ export default function Img({
     }
   }, [aspectRatio, DOMRect, height, imageDimension, orientation, width]);
 
+  useEffect(() => {
+    return () => {
+      resizeObserver.current?.disconnect();
+      resizeObserver.current = undefined;
+    };
+  }, []);
+
   if (src) {
-    return <img ref={img} src={src} alt={alt} style={style} />;
+    return <img ref={ref} src={src} alt={alt} style={style} />;
   }
 
   if (placeholder) {
-    return <div ref={div} style={style} />;
+    return <div ref={ref} style={style} />;
   }
 
   return null;
