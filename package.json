@@ -28,7 +28,9 @@
     "watch": "rollup -cw",
     "test": "echo 'No tests written",
     "lint": "eslint",
-    "release": "npm run build && release-it"
+    "release": "npm run build && release-it",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "peerDependencies": {
     "axios": ">=0.26.1",
@@ -53,6 +55,14 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-typescript": "^8.3.1",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-interactions": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/builder-webpack5": "^6.4.19",
+    "@storybook/manager-webpack5": "^6.4.19",
+    "@storybook/react": "^6.4.19",
+    "@storybook/testing-library": "^0.0.9",
     "@types/draft-js": "^0.11.9",
     "@types/googlemaps": "^3.43.3",
     "@types/lodash.isequal": "^4.5.5",
@@ -82,6 +92,8 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.49.10",
-    "typescript": "^4.6.3"
+    "storybook-addon-sass-postcss": "^0.1.0",
+    "typescript": "^4.6.3",
+    "webpack": "^5.70.0"
   }
 }
