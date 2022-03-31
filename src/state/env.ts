@@ -26,6 +26,10 @@ export interface Env {
 }
 
 function parseEnv(): Env {
+  if (!process?.env) {
+    return {};
+  }
+
   const processEnv = process.env as NativeEnv;
   const windowEnv: NativeEnv = window.env ? window.env : {};
 
