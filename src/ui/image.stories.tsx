@@ -17,7 +17,6 @@ export default {
   component: Img,
   argTypes: {
     width: {
-      defaultValue: 600,
       control: {
         type: 'range',
         min: 10,
@@ -93,4 +92,7 @@ const Template: ComponentStory<JSXElementConstructor<Props>> = ({
 
 export const Default = Template.bind({});
 
-Default.args = {};
+Default.args = {
+  width: 550,
+  aspectRatio: '4:3',
+};

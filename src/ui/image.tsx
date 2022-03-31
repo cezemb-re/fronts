@@ -1,5 +1,5 @@
 import { ReactElement, useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
-import { Property } from 'csstype';
+import * as CSS from 'csstype';
 import ResizeObserver from 'resize-observer-polyfill';
 import Model from '../state/model';
 
@@ -122,9 +122,9 @@ export interface Props {
   height?: string | number;
   aspectRatio?: AspectRatio;
   orientation?: Orientation;
-  objectFit?: Property.ObjectFit;
-  objectPosition?: Property.ObjectPosition;
-  backgroundColor?: Property.BackgroundColor;
+  objectFit?: CSS.Property.ObjectFit;
+  objectPosition?: CSS.Property.ObjectPosition;
+  backgroundColor?: CSS.Property.BackgroundColor;
   placeholder?: boolean;
 }
 
