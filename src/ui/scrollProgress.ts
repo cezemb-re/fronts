@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback, RefObject } from 'react';
 
-export function useScrollProgress(
-  currentRef: RefObject<Element> | null = null,
-): [RefObject<Element | null | undefined>, number, number] {
-  const ref = useRef<Element | null | undefined>(currentRef?.current);
+export function useScrollProgress<E extends Element = HTMLElement>(
+  currentRef?: RefObject<E>,
+): [RefObject<E | undefined>, number, number] {
+  const ref = useRef<E | undefined>(currentRef?.current);
 
   const [progress, setProgress] = useState<number>(0);
   const [progressPx, setProgressPx] = useState<number>(0);
@@ -32,13 +32,13 @@ export function useScrollProgress(
   return [ref, progress, progressPx];
 }
 
-export function useScrollThreshold(
+export function useScrollThreshold<E extends Element = HTMLElement>(
   threshold = 0.2,
-  currentRef: RefObject<Element> | null = null,
-): [RefObject<Element | null | undefined>, boolean, number, number] {
+  currentRef?: RefObject<E>,
+): [RefObject<E | undefined>, boolean, number, number] {
   const [active, setActive] = useState(false);
 
-  const [ref, progress, progressPx] = useScrollProgress(currentRef);
+  const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
 
   useEffect(() => {
     if (progress >= threshold && !active) setActive(true);
@@ -48,13 +48,13 @@ export function useScrollThreshold(
   return [ref, active, progress, progressPx];
 }
 
-export function useScrollThresholds(
+export function useScrollThresholds<E extends Element = HTMLElement>(
   thresholds = [0.25],
-  currentRef?: RefObject<Element> | null,
-): [RefObject<Element | null | undefined>, Array<boolean>, number, number] {
+  currentRef?: RefObject<E>,
+): [RefObject<E | undefined>, Array<boolean>, number, number] {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
-  const [ref, progress, progressPx] = useScrollProgress(currentRef);
+  const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
 
   useEffect(() => {
     let match = false;
