@@ -6,15 +6,15 @@ export function doesEventTargetContainsElements(event: MouseEvent, elements: Ele
   if (Array.isArray(elements)) {
     let match = false;
     elements.forEach((element: Element | RefObject<Element>) => {
-      const e = 'current' in element && element.current ? element.current : (element as Element);
-      if (e.contains(event.target as Node)) {
+      const e = 'current' in element ? element.current : (element as Element);
+      if (e?.contains(event.target as Node)) {
         match = true;
       }
     });
     return match;
   }
-  const e = 'current' in elements && elements.current ? elements.current : (elements as Element);
-  return e.contains(event.target as Node);
+  const e = 'current' in elements ? elements.current : (elements as Element);
+  return e?.contains(event.target as Node) || false;
 }
 
 export function useClickOutside(elements: Elements, callback: (event: MouseEvent) => void): void {
