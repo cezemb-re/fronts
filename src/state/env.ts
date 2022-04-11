@@ -4,7 +4,7 @@ export type NativeEnv = {
 
 declare global {
   interface Window {
-    env: NativeEnv;
+    env: NodeJS.ProcessEnv;
   }
 }
 
@@ -26,12 +26,8 @@ export interface Env {
 }
 
 function parseEnv(): Env {
-  if (!process?.env) {
-    return {};
-  }
-
-  const processEnv = process.env as NativeEnv;
-  const windowEnv: NativeEnv = window.env ? window.env : {};
+  const processEnv: NodeJS.ProcessEnv = process?.env || {};
+  const windowEnv: NodeJS.ProcessEnv = window?.env || {};
 
   const env: Env = {};
 
