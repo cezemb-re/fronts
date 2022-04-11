@@ -24,7 +24,7 @@ import {
   RequestParams,
 } from './state/api';
 import Model from './state/model';
-import useClickOutside from './ui/clickOutside';
+import { doesEventTargetContainsElements, useClickOutside } from './ui/interactions';
 import useDOMRect from './ui/domRect';
 import { useScrollProgress, useScrollThreshold, useScrollThresholds } from './ui/scrollProgress';
 import Img, {
@@ -90,7 +90,7 @@ export type { Model };
  * UI
  */
 
-export { useClickOutside };
+export { doesEventTargetContainsElements, useClickOutside };
 
 export { useDOMRect };
 
