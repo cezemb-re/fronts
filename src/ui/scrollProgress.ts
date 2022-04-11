@@ -2,8 +2,8 @@ import { useState, useRef, useEffect, useCallback, RefObject } from 'react';
 
 export function useScrollProgress<E extends Element = HTMLElement>(
   currentRef?: RefObject<E>,
-): [RefObject<E | undefined>, number, number] {
-  const ref = useRef<E | undefined>(currentRef?.current);
+): [RefObject<E>, number, number] {
+  const ref = useRef<E>(currentRef?.current || null);
 
   const [progress, setProgress] = useState<number>(0);
   const [progressPx, setProgressPx] = useState<number>(0);
@@ -35,7 +35,7 @@ export function useScrollProgress<E extends Element = HTMLElement>(
 export function useScrollThreshold<E extends Element = HTMLElement>(
   threshold = 0.2,
   currentRef?: RefObject<E>,
-): [RefObject<E | undefined>, boolean, number, number] {
+): [RefObject<E>, boolean, number, number] {
   const [active, setActive] = useState(false);
 
   const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
@@ -51,7 +51,7 @@ export function useScrollThreshold<E extends Element = HTMLElement>(
 export function useScrollThresholds<E extends Element = HTMLElement>(
   thresholds = [0.25],
   currentRef?: RefObject<E>,
-): [RefObject<E | undefined>, Array<boolean>, number, number] {
+): [RefObject<E>, Array<boolean>, number, number] {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
   const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
