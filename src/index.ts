@@ -39,7 +39,7 @@ import Img, {
   calcWidth,
 } from './ui/image';
 import { BreakPoint, useBreakPoint } from './ui/container';
-import Wrapper from './ui/wrapper';
+import Wrapper, { WrapperProps } from './ui/wrapper';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
 import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geoLocation';
@@ -106,6 +106,8 @@ export { useImageDimensions, resolveRatio, calcHeight, calcWidth, Img };
 export type { Format, AspectRatio, Orientation };
 
 export { Wrapper };
+
+export type { WrapperProps };
 
 /**
  * Adapters
