@@ -1,9 +1,9 @@
-import { FocusEventHandler, MouseEventHandler, ReactElement, ReactNode } from 'react';
+import { FocusEventHandler, MouseEvent, ReactElement, ReactNode } from 'react';
 import { NavLink, To } from 'react-router-dom';
 
 export interface WrapperProps {
   to?: To;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => unknown;
   onFocus?: FocusEventHandler<HTMLElement>;
   onBlur?: FocusEventHandler<HTMLElement>;
   disabled?: boolean;
