@@ -114,6 +114,8 @@ export function createRequestBody<B extends RequestBody = RequestBody>(body: B):
     } else if (typeof value === 'object') {
       if (value instanceof Blob) {
         formData.append(param, value);
+      } else if ('toString' in value && value.toString && typeof value.toString === 'function') {
+        formData.append(param, value.toString());
       } else {
         formData.append(param, JSON.stringify(value));
       }
