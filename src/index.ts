@@ -40,6 +40,7 @@ import Img, {
 } from './ui/image';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import Wrapper, { WrapperProps } from './ui/wrapper';
+import { ModalsContext, useModals, Modal, ModalComponentProps, ModalsState } from './ui/modal';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
 import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geoLocation';
@@ -58,15 +59,23 @@ import Place from './utils/place';
  * State
  */
 
-export type { Env, NativeEnv };
-
-export { env };
-
-export type { DefaultState, Adapter, Action };
-
-export { createReducer };
+export {
+  env,
+  createReducer,
+  createApiReducer,
+  createRequestBody,
+  apiRequest,
+  fetchApi,
+  useApiRequest,
+  useApi,
+};
 
 export type {
+  Env,
+  NativeEnv,
+  DefaultState,
+  Adapter,
+  Action,
   FormErrors,
   ApiErrorPrototype,
   ApiError,
@@ -81,33 +90,43 @@ export type {
   RequestBody,
   RequestParams,
   HTTPMethod,
+  Model,
 };
-
-export { createApiReducer, createRequestBody, apiRequest, fetchApi, useApiRequest, useApi };
-
-export type { Model };
 
 /**
  * UI
  */
 
-export { doesEventTargetContainsElements, useClickOutside };
+export {
+  doesEventTargetContainsElements,
+  useClickOutside,
+  useDOMRect,
+  useScrollProgress,
+  useScrollThreshold,
+  useScrollThresholds,
+  BreakPoint,
+  useBreakPoint,
+  useImageDimensions,
+  resolveRatio,
+  calcHeight,
+  calcWidth,
+  Img,
+  Wrapper,
+  ModalsContext,
+  useModals,
+};
 
-export { useDOMRect };
-
-export { useScrollProgress, useScrollThreshold, useScrollThresholds };
-
-export type { Dimension, Image };
-
-export { BreakPoint, useBreakPoint };
-
-export { useImageDimensions, resolveRatio, calcHeight, calcWidth, Img };
-
-export type { Format, AspectRatio, Orientation };
-
-export { Wrapper };
-
-export type { WrapperProps };
+export type {
+  Dimension,
+  Image,
+  Format,
+  AspectRatio,
+  Orientation,
+  WrapperProps,
+  Modal,
+  ModalComponentProps,
+  ModalsState,
+};
 
 /**
  * Adapters
