@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { JSXElementConstructor } from 'react';
 import { Property } from 'csstype';
-import Img, { AspectRatio, Orientation } from './image';
+import Img, { AspectRatio, Orientation } from '../src/ui/image';
 
 interface Props {
   width?: number;
