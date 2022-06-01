@@ -26,8 +26,8 @@ export interface Env {
 }
 
 function parseEnv(): Env {
-  const processEnv: NodeJS.ProcessEnv = process?.env || {};
-  const windowEnv: NodeJS.ProcessEnv = window?.env || {};
+  const processEnv: NodeJS.ProcessEnv = process.env || {};
+  const windowEnv: NodeJS.ProcessEnv = window.env || {};
 
   const env: Env = {};
 
