@@ -5,6 +5,18 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import env from './env';
 import { Adapter } from './state';
+import Model from './model';
+
+export type ApiListResponse<N extends string, M extends Model = Model> = {
+  [key in N]: M[];
+} & {
+  total: number;
+  limit: number;
+  url: string;
+  page?: number;
+  next_page?: number;
+  previous_page?: number;
+};
 
 export interface FormErrors {
   [field: string]: string;
