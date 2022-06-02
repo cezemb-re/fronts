@@ -10,8 +10,8 @@ export type ApiListResponse<N extends string, D = unknown> = {
   [key in N]: D[];
 } & {
   total: number;
-  limit: number;
-  url: string;
+  url?: string;
+  limit?: number;
   page?: number;
   next_page?: number;
   previous_page?: number;
