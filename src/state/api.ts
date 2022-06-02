@@ -5,10 +5,9 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import env from './env';
 import { Adapter } from './state';
-import Model from './model';
 
-export type ApiListResponse<N extends string, M extends Model = Model> = {
-  [key in N]: M[];
+export type ApiListResponse<N extends string, D = unknown> = {
+  [key in N]: D[];
 } & {
   total: number;
   limit: number;
