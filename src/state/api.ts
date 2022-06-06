@@ -6,7 +6,7 @@ import _ from 'lodash';
 import env from './env';
 import { Adapter } from './state';
 
-export type ApiListResponse<N extends string, D = unknown> = {
+export type DataListApiResponseBody<N extends string, D = unknown> = {
   [key in N]: D[];
 } & {
   total: number;

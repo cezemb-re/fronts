@@ -22,7 +22,7 @@ import {
   useApi,
   RequestBody,
   RequestParams,
-  ApiListResponse,
+  DataListApiResponseBody,
 } from './state/api';
 import Model from './state/model';
 import { doesEventTargetContainsElements, useClickOutside } from './ui/interactions';
@@ -92,7 +92,7 @@ export type {
   RequestParams,
   HTTPMethod,
   Model,
-  ApiListResponse,
+  DataListApiResponseBody,
 };
 
 /**
