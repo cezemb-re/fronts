@@ -52,16 +52,12 @@ import {
 import Place from './utils/place';
 
 /**
- * Env
+ * State
  */
 
 export { env };
 
 export type { Env, NativeEnv };
-
-/**
- * Api
- */
 
 export {
   buildRequestBody,

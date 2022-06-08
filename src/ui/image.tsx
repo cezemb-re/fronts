@@ -1,7 +1,7 @@
 import { ReactElement, useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import * as CSS from 'csstype';
 import ResizeObserver from 'resize-observer-polyfill';
-import Model from '../state/model';
+import { Model } from '../state/api';
 
 export interface Dimension {
   width?: number;
