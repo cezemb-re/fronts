@@ -211,10 +211,10 @@ export interface ApiParams {
 }
 
 export interface ApiContext extends ApiParams {
-  setHost(host: string): void;
-  setKey(key: string): void;
-  setLocale(locale: string): void;
-  setBearerToken(bearerToken: string): void;
+  setHost(host?: string | null): void;
+  setKey(key?: string | null): void;
+  setLocale(locale?: string | null): void;
+  setBearerToken(bearerToken?: string | null): void;
 
   init(params: ApiParams): void;
   init(
