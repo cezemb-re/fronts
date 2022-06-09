@@ -1,14 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
-import {
-  createContext,
-  ReactElement,
-  useContext,
-  useMemo,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  Ref,
-} from 'react';
+import { createContext, ReactElement, useContext, useMemo, useState } from 'react';
 
 export interface Model {
   id: string;
@@ -94,7 +85,7 @@ export type RequestParams = { [key: string]: unknown };
 
 export interface ApiRequestOptions<RP extends RequestParams = RequestParams> {
   key?: string | null;
-  bearer_token?: string | null;
+  bearerToken?: string | null;
   locale?: string | null;
   params?: RP;
 }
@@ -108,8 +99,8 @@ export function buildRequestConfig<RP extends RequestParams = RequestParams>(
     headers['X-Api-Key'] = opts.key;
   }
 
-  if (opts?.bearer_token) {
-    headers.Authorization = `Bearer ${opts.bearer_token}`;
+  if (opts?.bearerToken) {
+    headers.Authorization = `Bearer ${opts.bearerToken}`;
   }
 
   if (opts?.locale) {
@@ -216,7 +207,7 @@ export interface ApiParams {
   host?: string | null;
   key?: string | null;
   locale?: string | null;
-  bearer_token?: string | null;
+  bearerToken?: string | null;
 }
 
 export interface ApiContext extends ApiParams {
@@ -263,40 +254,37 @@ export function useApi(): ApiContext {
   return useContext<ApiContext>(context);
 }
 
-export interface Props {
+export interface Props extends ApiParams {
   children?: ReactElement;
 }
 
-// forwardRef(Form) as <F extends FormFields = FormFields, V = unknown>(
-//   props: FormProps<F> & {
-//     ref?: Ref<FormContext<F, V>>;
-//   },
-// ) => ReactElement;
-
-export const ApiProvider = forwardRef(function ApiProvider(
-  { children }: Props,
-  ref: Ref<ApiContext>,
-): ReactElement {
-  const [host, setHost] = useState<string | null>();
-  const [key, setKey] = useState<string | null>();
-  const [locale, setLocale] = useState<string | null>();
-  const [bearerToken, setBearerToken] = useState<string | null>();
+export function ApiProvider({
+  children,
+  host: _host,
+  key: _key,
+  locale: _locale,
+  bearerToken: _bearerToken,
+}: Props): ReactElement {
+  const [host, setHost] = useState<string | null | undefined>(_host);
+  const [key, setKey] = useState<string | null | undefined>(_key);
+  const [locale, setLocale] = useState<string | null | undefined>(_locale);
+  const [bearerToken, setBearerToken] = useState<string | null | undefined>(_bearerToken);
 
   const value = useMemo<ApiContext>(
     () => ({
       host,
       key,
       locale,
-      bearer_token: bearerToken,
+      bearerToken,
       setHost,
       setKey,
       setLocale,
       setBearerToken,
       init: (
         paramsOrHost: ApiParams | string | null,
-        _key?: string | null,
-        _locale?: string | null,
-        _bearerToken?: string | null,
+        __key?: string | null,
+        __locale?: string | null,
+        __bearerToken?: string | null,
       ) => {
         if (paramsOrHost && typeof paramsOrHost === 'object') {
           if (paramsOrHost.host !== undefined) {
@@ -308,35 +296,33 @@ export const ApiProvider = forwardRef(function ApiProvider(
           if (paramsOrHost.locale !== undefined) {
             setLocale(paramsOrHost.locale);
           }
-          if (paramsOrHost.bearer_token !== undefined) {
-            setBearerToken(paramsOrHost.bearer_token);
+          if (paramsOrHost.bearerToken !== undefined) {
+            setBearerToken(paramsOrHost.bearerToken);
           }
         } else if (paramsOrHost !== undefined) {
           setHost(paramsOrHost);
         }
-        if (_key !== undefined) {
-          setKey(_key);
+        if (__key !== undefined) {
+          setKey(__key);
         }
-        if (_locale !== undefined) {
-          setLocale(_locale);
+        if (__locale !== undefined) {
+          setLocale(__locale);
         }
-        if (_bearerToken !== undefined) {
-          setBearerToken(_bearerToken);
+        if (__bearerToken !== undefined) {
+          setBearerToken(__bearerToken);
         }
       },
       get: (route: string, params?: RequestParams) =>
-        apiGet(host + route, { key, locale, bearer_token: bearerToken, params }),
+        apiGet(host + route, { key, locale, bearerToken, params }),
       post: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPost(host + route, body, { key, locale, bearer_token: bearerToken, params }),
+        apiPost(host + route, body, { key, locale, bearerToken, params }),
       put: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPut(host + route, body, { key, locale, bearer_token: bearerToken, params }),
+        apiPut(host + route, body, { key, locale, bearerToken, params }),
       delete: (route: string, params?: RequestParams) =>
-        apiDelete(host + route, { key, locale, bearer_token: bearerToken, params }),
+        apiDelete(host + route, { key, locale, bearerToken, params }),
     }),
     [bearerToken, host, key, locale],
   );
 
-  useImperativeHandle<ApiContext, ApiContext>(ref, () => value, [value]);
-
   return <context.Provider value={value}>{children}</context.Provider>;
-});
+}
