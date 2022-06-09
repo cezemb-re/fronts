@@ -211,47 +211,47 @@ export interface ApiParams {
 }
 
 export interface ApiContext extends ApiParams {
-  setHost?(host: string): void;
-  setKey?(key: string): void;
-  setLocale?(locale: string): void;
-  setBearerToken?(bearerToken: string): void;
+  setHost(host: string): void;
+  setKey(key: string): void;
+  setLocale(locale: string): void;
+  setBearerToken(bearerToken: string): void;
 
-  init?(params: ApiParams): void;
-  init?(
+  init(params: ApiParams): void;
+  init(
     host: string | null,
     key?: string | null,
     locale?: string | null,
     bearerToken?: string | null,
   ): void;
 
-  get?<D = unknown, RP extends RequestParams = RequestParams>(
+  get<D = unknown, RP extends RequestParams = RequestParams>(
     route: string,
     params?: RP,
   ): Promise<AxiosResponse<D>>;
-  post?<
-    D = unknown,
-    RB extends RequestBody = RequestBody,
-    RP extends RequestParams = RequestParams,
-  >(
+  post<D = unknown, RB extends RequestBody = RequestBody, RP extends RequestParams = RequestParams>(
     route: string,
     body: RB,
     params?: RP,
   ): Promise<AxiosResponse<D>>;
-  put?<D = unknown, RB extends RequestBody = RequestBody, RP extends RequestParams = RequestParams>(
+  put<D = unknown, RB extends RequestBody = RequestBody, RP extends RequestParams = RequestParams>(
     route: string,
     body: RB,
     params?: RP,
   ): Promise<AxiosResponse<D>>;
-  delete?<D = unknown, RP extends RequestParams = RequestParams>(
+  delete<D = unknown, RP extends RequestParams = RequestParams>(
     route: string,
     params?: RP,
   ): Promise<AxiosResponse<D>>;
 }
 
-const context = createContext<ApiContext>({});
+const apiContext = createContext<ApiContext | undefined>(undefined);
 
 export function useApi(): ApiContext {
-  return useContext<ApiContext>(context);
+  const context = useContext<ApiContext | undefined>(apiContext);
+  if (!context) {
+    throw new Error('Missing api context');
+  }
+  return context;
 }
 
 export interface Props extends ApiParams {
@@ -324,5 +324,5 @@ export function ApiProvider({
     [bearerToken, host, key, locale],
   );
 
-  return <context.Provider value={value}>{children}</context.Provider>;
+  return <apiContext.Provider value={value}>{children}</apiContext.Provider>;
 }
