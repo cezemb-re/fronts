@@ -2,7 +2,7 @@ import './index.scss';
 import env, { Env, NativeEnv } from './state/env';
 import {
   Model,
-  DataList,
+  PaginatedList,
   FormErrors,
   ApiErrorPrototype,
   ApiError,
@@ -72,7 +72,7 @@ export {
 
 export type {
   Model,
-  DataList,
+  PaginatedList,
   FormErrors,
   ApiErrorPrototype,
   ApiError,

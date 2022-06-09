@@ -8,7 +8,7 @@ export interface Model {
   [key: string]: unknown;
 }
 
-export type DataList<N extends string, D = unknown> = {
+export type PaginatedList<N extends string, D = unknown> = {
   [key in N]: D[];
 } & {
   total: number;
