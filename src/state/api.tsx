@@ -1,5 +1,14 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
-import { createContext, ReactElement, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  ReactElement,
+  useContext,
+  useMemo,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  Ref,
+} from 'react';
 
 export interface Model {
   id: string;
@@ -258,7 +267,16 @@ export interface Props {
   children?: ReactElement;
 }
 
-export function ApiProvider({ children }: Props): ReactElement {
+// forwardRef(Form) as <F extends FormFields = FormFields, V = unknown>(
+//   props: FormProps<F> & {
+//     ref?: Ref<FormContext<F, V>>;
+//   },
+// ) => ReactElement;
+
+export const ApiProvider = forwardRef(function ApiProvider(
+  { children }: Props,
+  ref: Ref<ApiContext>,
+): ReactElement {
   const [host, setHost] = useState<string | null>();
   const [key, setKey] = useState<string | null>();
   const [locale, setLocale] = useState<string | null>();
@@ -317,5 +335,8 @@ export function ApiProvider({ children }: Props): ReactElement {
     }),
     [bearerToken, host, key, locale],
   );
+
+  useImperativeHandle<ApiContext, ApiContext>(ref, () => value, [value]);
+
   return <context.Provider value={value}>{children}</context.Provider>;
-}
+});
