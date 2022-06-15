@@ -4,8 +4,9 @@ import {
   Model,
   PaginatedList,
   FormErrors,
-  ApiErrorPrototype,
+  ApiErrorData,
   ApiError,
+  isApiError,
   RequestBody,
   buildRequestBody,
   RequestParams,
@@ -68,13 +69,14 @@ export {
   apiDelete,
   useApi,
   ApiProvider,
+  isApiError,
 };
 
 export type {
   Model,
   PaginatedList,
   FormErrors,
-  ApiErrorPrototype,
+  ApiErrorData,
   ApiError,
   RequestBody,
   RequestParams,

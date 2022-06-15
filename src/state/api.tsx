@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { createContext, ReactElement, useContext, useMemo, useState } from 'react';
+import httpStatus from 'http-status';
 
 export interface Model {
   id: string;
@@ -23,34 +24,52 @@ export interface FormErrors {
   [field: string]: string;
 }
 
-export interface ApiErrorPrototype<F extends FormErrors = FormErrors> {
+export interface ApiErrorData<FE extends FormErrors = FormErrors> {
   status?: number;
   code?: string;
-  form_errors?: F;
+  form_errors?: FE;
   state?: Record<string, unknown>;
   message?: string;
 }
 
-export class ApiError<F extends FormErrors = FormErrors>
-  extends Error
-  implements ApiErrorPrototype
-{
+export class ApiError<FE extends FormErrors = FormErrors> extends Error implements ApiErrorData {
+  readonly __FLAG__ = 'ApiError';
+
   status?: number;
 
   code?: string;
 
-  form_errors?: F;
+  form_errors?: FE;
 
   state?: Record<string, unknown>;
 
-  constructor(error: ApiErrorPrototype<F>) {
-    super(error.message);
+  constructor(error: Error | ApiErrorData<FE> | string) {
+    if (error instanceof Error) {
+      super(error.message);
+    } else if (typeof error === 'object') {
+      super(error.message);
 
-    this.status = error.status;
-    this.code = error.code;
-    this.form_errors = error.form_errors;
-    this.state = error.state;
+      this.status = error.status;
+      this.code = error.code;
+      this.form_errors = error.form_errors;
+      this.state = error.state;
+    } else {
+      super(error);
+
+      this.status = httpStatus.BAD_REQUEST;
+    }
   }
+}
+
+export function isApiError(error: unknown): boolean {
+  return !!(
+    error &&
+    typeof error === 'object' &&
+    '__FLAG__' in error &&
+    error instanceof ApiError &&
+    error.__FLAG__ &&
+    error.__FLAG__ === 'ApiError'
+  );
 }
 
 export type RequestBody = { [key: string]: unknown };
@@ -113,6 +132,25 @@ export function buildRequestConfig<RP extends RequestParams = RequestParams>(
   };
 }
 
+function parseError(error: unknown): ApiError {
+  if (!error) {
+    return new ApiError('Unknown error');
+  }
+  if (typeof error === 'object') {
+    if ('response' in error && (error as AxiosError).response) {
+      const { response } = error as AxiosError<ApiErrorData>;
+      if (response?.data) {
+        return new ApiError({ ...response.data, status: response.status });
+      }
+    }
+    return new ApiError(error as Error);
+  }
+  if (typeof error === 'string') {
+    return new ApiError(error);
+  }
+  return new ApiError('Unknown error');
+}
+
 export async function apiGet<D = unknown, RP extends RequestParams = RequestParams>(
   url: string,
   opts?: ApiRequestOptions<RP>,
@@ -122,16 +160,7 @@ export async function apiGet<D = unknown, RP extends RequestParams = RequestPara
   try {
     return await axios.get<D>(url, config);
   } catch (error: unknown) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const e = error as AxiosError<ApiErrorPrototype>;
-      if (e.response?.data) {
-        throw new ApiError(e.response.data);
-      } else {
-        throw new Error('Unknown error');
-      }
-    } else {
-      throw error;
-    }
+    throw parseError(error);
   }
 }
 
@@ -145,16 +174,7 @@ export async function apiPost<
   try {
     return await axios.post<D>(url, buildRequestBody<RB>(body), config);
   } catch (error: unknown) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const e = error as AxiosError<ApiErrorPrototype>;
-      if (e.response?.data) {
-        throw new ApiError(e.response.data);
-      } else {
-        throw new Error('Unknown error');
-      }
-    } else {
-      throw error;
-    }
+    throw parseError(error);
   }
 }
 
@@ -168,16 +188,7 @@ export async function apiPut<
   try {
     return await axios.put<D>(url, buildRequestBody<RB>(body), config);
   } catch (error: unknown) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const e = error as AxiosError<ApiErrorPrototype>;
-      if (e.response?.data) {
-        throw new ApiError(e.response.data);
-      } else {
-        throw new Error('Unknown error');
-      }
-    } else {
-      throw error;
-    }
+    throw parseError(error);
   }
 }
 
@@ -190,16 +201,7 @@ export async function apiDelete<D = unknown, RP extends RequestParams = RequestP
   try {
     return await axios.get<D>(url, config);
   } catch (error: unknown) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const e = error as AxiosError<ApiErrorPrototype>;
-      if (e.response?.data) {
-        throw new ApiError(e.response.data);
-      } else {
-        throw new Error('Unknown error');
-      }
-    } else {
-      throw error;
-    }
+    throw parseError(error);
   }
 }
 
