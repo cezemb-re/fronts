@@ -84,7 +84,7 @@ export function buildRequestBody<B extends RequestBody = RequestBody>(body: B): 
 export type RequestParams = { [key: string]: unknown };
 
 export interface ApiRequestOptions<RP extends RequestParams = RequestParams> {
-  key?: string | null;
+  apiKey?: string | null;
   bearerToken?: string | null;
   locale?: string | null;
   params?: RP;
@@ -95,8 +95,8 @@ export function buildRequestConfig<RP extends RequestParams = RequestParams>(
 ): AxiosRequestConfig {
   const headers: AxiosRequestHeaders = {};
 
-  if (opts?.key) {
-    headers['X-Api-Key'] = opts.key;
+  if (opts?.apiKey) {
+    headers['X-Api-Key'] = opts.apiKey;
   }
 
   if (opts?.bearerToken) {
@@ -205,14 +205,14 @@ export async function apiDelete<D = unknown, RP extends RequestParams = RequestP
 
 export interface ApiParams {
   host?: string | null;
-  key?: string | null;
+  apiKey?: string | null;
   locale?: string | null;
   bearerToken?: string | null;
 }
 
 export interface ApiContext extends ApiParams {
   setHost(host?: string | null): void;
-  setKey(key?: string | null): void;
+  setApiKey(apiKey?: string | null): void;
   setLocale(locale?: string | null): void;
   setBearerToken(bearerToken?: string | null): void;
 
@@ -261,28 +261,28 @@ export interface Props extends ApiParams {
 export function ApiProvider({
   children,
   host: _host,
-  key: _key,
+  apiKey: _apiKey,
   locale: _locale,
   bearerToken: _bearerToken,
 }: Props): ReactElement {
   const [host, setHost] = useState<string | null | undefined>(_host);
-  const [key, setKey] = useState<string | null | undefined>(_key);
+  const [apiKey, setApiKey] = useState<string | null | undefined>(_apiKey);
   const [locale, setLocale] = useState<string | null | undefined>(_locale);
   const [bearerToken, setBearerToken] = useState<string | null | undefined>(_bearerToken);
 
   const value = useMemo<ApiContext>(
     () => ({
       host,
-      key,
+      apiKey,
       locale,
       bearerToken,
       setHost,
-      setKey,
+      setApiKey,
       setLocale,
       setBearerToken,
       init: (
         paramsOrHost: ApiParams | string | null,
-        __key?: string | null,
+        __apiKey?: string | null,
         __locale?: string | null,
         __bearerToken?: string | null,
       ) => {
@@ -290,8 +290,8 @@ export function ApiProvider({
           if (paramsOrHost.host !== undefined) {
             setHost(paramsOrHost.host);
           }
-          if (paramsOrHost.key !== undefined) {
-            setKey(paramsOrHost.key);
+          if (paramsOrHost.apiKey !== undefined) {
+            setApiKey(paramsOrHost.apiKey);
           }
           if (paramsOrHost.locale !== undefined) {
             setLocale(paramsOrHost.locale);
@@ -302,8 +302,8 @@ export function ApiProvider({
         } else if (paramsOrHost !== undefined) {
           setHost(paramsOrHost);
         }
-        if (__key !== undefined) {
-          setKey(__key);
+        if (__apiKey !== undefined) {
+          setApiKey(__apiKey);
         }
         if (__locale !== undefined) {
           setLocale(__locale);
@@ -313,15 +313,15 @@ export function ApiProvider({
         }
       },
       get: (route: string, params?: RequestParams) =>
-        apiGet(host + route, { key, locale, bearerToken, params }),
+        apiGet(host + route, { apiKey, locale, bearerToken, params }),
       post: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPost(host + route, body, { key, locale, bearerToken, params }),
+        apiPost(host + route, body, { apiKey, locale, bearerToken, params }),
       put: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPut(host + route, body, { key, locale, bearerToken, params }),
+        apiPut(host + route, body, { apiKey, locale, bearerToken, params }),
       delete: (route: string, params?: RequestParams) =>
-        apiDelete(host + route, { key, locale, bearerToken, params }),
+        apiDelete(host + route, { apiKey, locale, bearerToken, params }),
     }),
-    [bearerToken, host, key, locale],
+    [bearerToken, host, apiKey, locale],
   );
 
   return <apiContext.Provider value={value}>{children}</apiContext.Provider>;
