@@ -16,7 +16,7 @@ import {
   apiPost,
   apiPut,
   apiDelete,
-  ApiParams,
+  ApiConfig,
   ApiContext,
   useApi,
   ApiProvider,
@@ -81,7 +81,7 @@ export type {
   RequestBody,
   RequestParams,
   ApiRequestOptions,
-  ApiParams,
+  ApiConfig,
   ApiContext,
 };
 
