@@ -107,6 +107,7 @@ export interface ApiRequestOptions<RP extends RequestParams = RequestParams> {
   bearerToken?: string | null;
   locale?: string | null;
   params?: RP;
+  crossDomain?: boolean;
 }
 
 export function buildRequestConfig<RP extends RequestParams = RequestParams>(
@@ -205,20 +206,20 @@ export async function apiDelete<D = unknown, RP extends RequestParams = RequestP
   }
 }
 
-export interface ApiParams {
+export interface ApiConfig {
   host?: string | null;
   apiKey?: string | null;
   locale?: string | null;
   bearerToken?: string | null;
 }
 
-export interface ApiContext extends ApiParams {
+export interface ApiContext extends ApiConfig {
   setHost(host?: string | null): void;
   setApiKey(apiKey?: string | null): void;
   setLocale(locale?: string | null): void;
   setBearerToken(bearerToken?: string | null): void;
 
-  init(params: ApiParams): void;
+  init(params: ApiConfig): void;
   init(
     host: string | null,
     key?: string | null,
@@ -256,7 +257,7 @@ export function useApi(): ApiContext {
   return context;
 }
 
-export interface Props extends ApiParams {
+export interface Props extends ApiConfig {
   children?: ReactElement;
 }
 
@@ -283,26 +284,26 @@ export function ApiProvider({
       setLocale,
       setBearerToken,
       init: (
-        paramsOrHost: ApiParams | string | null,
+        configOrHost: ApiConfig | string | null,
         __apiKey?: string | null,
         __locale?: string | null,
         __bearerToken?: string | null,
       ) => {
-        if (paramsOrHost && typeof paramsOrHost === 'object') {
-          if (paramsOrHost.host !== undefined) {
-            setHost(paramsOrHost.host);
+        if (configOrHost && typeof configOrHost === 'object') {
+          if (configOrHost.host !== undefined) {
+            setHost(configOrHost.host);
           }
-          if (paramsOrHost.apiKey !== undefined) {
-            setApiKey(paramsOrHost.apiKey);
+          if (configOrHost.apiKey !== undefined) {
+            setApiKey(configOrHost.apiKey);
           }
-          if (paramsOrHost.locale !== undefined) {
-            setLocale(paramsOrHost.locale);
+          if (configOrHost.locale !== undefined) {
+            setLocale(configOrHost.locale);
           }
-          if (paramsOrHost.bearerToken !== undefined) {
-            setBearerToken(paramsOrHost.bearerToken);
+          if (configOrHost.bearerToken !== undefined) {
+            setBearerToken(configOrHost.bearerToken);
           }
-        } else if (paramsOrHost !== undefined) {
-          setHost(paramsOrHost);
+        } else if (configOrHost !== undefined) {
+          setHost(configOrHost);
         }
         if (__apiKey !== undefined) {
           setApiKey(__apiKey);
