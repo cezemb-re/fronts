@@ -249,7 +249,7 @@ export function useApi(): ApiContext {
   return context;
 }
 
-const API_CONFIG_STORAGE_KEY = Buffer.from('cezembre_fronts_api_config').toString('base64');
+const API_CONFIG_STORAGE_KEY = base64.encode('cezembre_fronts_api_config');
 
 function storeConfig(config?: ApiConfig): void {
   if (window) {
