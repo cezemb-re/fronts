@@ -10,7 +10,6 @@ import {
   RequestBody,
   buildRequestBody,
   RequestParams,
-  ApiRequestOptions,
   buildRequestConfig,
   apiGet,
   apiPost,
@@ -80,7 +79,6 @@ export type {
   ApiError,
   RequestBody,
   RequestParams,
-  ApiRequestOptions,
   ApiConfig,
   ApiContext,
 };

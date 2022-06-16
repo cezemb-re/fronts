@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
-import { createContext, ReactElement, useContext, useMemo, useState } from 'react';
+import { createContext, ReactElement, useCallback, useContext, useMemo, useState } from 'react';
 import httpStatus from 'http-status';
 
 export interface Model {
@@ -100,36 +100,36 @@ export function buildRequestBody<B extends RequestBody = RequestBody>(body: B): 
   return formData;
 }
 
-export type RequestParams = { [key: string]: unknown };
-
-export interface ApiRequestOptions<RP extends RequestParams = RequestParams> {
+export interface ApiConfig {
+  host?: string | null;
   apiKey?: string | null;
-  bearerToken?: string | null;
   locale?: string | null;
-  params?: RP;
-  crossDomain?: boolean;
+  bearerToken?: string | null;
 }
 
+export type RequestParams = { [key: string]: unknown };
+
 export function buildRequestConfig<RP extends RequestParams = RequestParams>(
-  opts?: ApiRequestOptions<RP>,
+  apiConfig?: ApiConfig,
+  params?: RP,
 ): AxiosRequestConfig {
   const headers: AxiosRequestHeaders = {};
 
-  if (opts?.apiKey) {
-    headers['X-Api-Key'] = opts.apiKey;
+  if (apiConfig?.apiKey) {
+    headers['X-Api-Key'] = apiConfig.apiKey;
   }
 
-  if (opts?.bearerToken) {
-    headers.Authorization = `Bearer ${opts.bearerToken}`;
+  if (apiConfig?.bearerToken) {
+    headers.Authorization = `Bearer ${apiConfig.bearerToken}`;
   }
 
-  if (opts?.locale) {
-    headers['X-locale'] = opts.locale;
+  if (apiConfig?.locale) {
+    headers['X-locale'] = apiConfig.locale;
   }
 
   return {
     headers,
-    params: opts?.params,
+    params,
   };
 }
 
@@ -154,12 +154,13 @@ function parseError(error: unknown): ApiError {
 
 export async function apiGet<D = unknown, RP extends RequestParams = RequestParams>(
   url: string,
-  opts?: ApiRequestOptions<RP>,
+  apiConfig?: ApiConfig,
+  params?: RP,
 ): Promise<AxiosResponse<D>> {
-  const config = buildRequestConfig<RP>(opts);
+  const config = buildRequestConfig<RP>(apiConfig, params);
 
   try {
-    return await axios.get<D>(url, config);
+    return await axios.get<D>((apiConfig?.host || '') + url, config);
   } catch (error: unknown) {
     throw parseError(error);
   }
@@ -169,11 +170,11 @@ export async function apiPost<
   D = unknown,
   RB extends RequestBody = RequestBody,
   RP extends RequestParams = RequestParams,
->(url: string, body: RB, opts?: ApiRequestOptions<RP>): Promise<AxiosResponse<D>> {
-  const config = buildRequestConfig<RP>(opts);
+>(url: string, body: RB, apiConfig?: ApiConfig, params?: RP): Promise<AxiosResponse<D>> {
+  const config = buildRequestConfig<RP>(apiConfig, params);
 
   try {
-    return await axios.post<D>(url, buildRequestBody<RB>(body), config);
+    return await axios.post<D>((apiConfig?.host || '') + url, buildRequestBody<RB>(body), config);
   } catch (error: unknown) {
     throw parseError(error);
   }
@@ -183,11 +184,11 @@ export async function apiPut<
   D = unknown,
   RB extends RequestBody = RequestBody,
   RP extends RequestParams = RequestParams,
->(url: string, body: RB, opts?: ApiRequestOptions<RP>): Promise<AxiosResponse<D>> {
-  const config = buildRequestConfig<RP>(opts);
+>(url: string, body: RB, apiConfig?: ApiConfig, params?: RP): Promise<AxiosResponse<D>> {
+  const config = buildRequestConfig<RP>(apiConfig, params);
 
   try {
-    return await axios.put<D>(url, buildRequestBody<RB>(body), config);
+    return await axios.put<D>((apiConfig?.host || '') + url, buildRequestBody<RB>(body), config);
   } catch (error: unknown) {
     throw parseError(error);
   }
@@ -195,37 +196,27 @@ export async function apiPut<
 
 export async function apiDelete<D = unknown, RP extends RequestParams = RequestParams>(
   url: string,
-  opts?: ApiRequestOptions<RP>,
+  apiConfig?: ApiConfig,
+  params?: RP,
 ): Promise<AxiosResponse<D>> {
-  const config = buildRequestConfig<RP>(opts);
+  const config = buildRequestConfig<RP>(apiConfig, params);
 
   try {
-    return await axios.get<D>(url, config);
+    return await axios.get<D>((apiConfig?.host || '') + url, config);
   } catch (error: unknown) {
     throw parseError(error);
   }
 }
 
-export interface ApiConfig {
-  host?: string | null;
-  apiKey?: string | null;
-  locale?: string | null;
-  bearerToken?: string | null;
-}
+export interface ApiContext {
+  config?: ApiConfig;
 
-export interface ApiContext extends ApiConfig {
+  setConfig(config: ApiConfig): void;
+
   setHost(host?: string | null): void;
   setApiKey(apiKey?: string | null): void;
   setLocale(locale?: string | null): void;
   setBearerToken(bearerToken?: string | null): void;
-
-  init(params: ApiConfig): void;
-  init(
-    host: string | null,
-    key?: string | null,
-    locale?: string | null,
-    bearerToken?: string | null,
-  ): void;
 
   get<D = unknown, RP extends RequestParams = RequestParams>(
     route: string,
@@ -257,74 +248,124 @@ export function useApi(): ApiContext {
   return context;
 }
 
-export interface Props extends ApiConfig {
-  children?: ReactElement;
+const API_CONFIG_STORAGE_KEY = Buffer.from('cezembre_fronts_api_config').toString('base64');
+
+function storeConfig(config?: ApiConfig): void {
+  if (window) {
+    window.localStorage.setItem(
+      API_CONFIG_STORAGE_KEY,
+      Buffer.from(JSON.stringify(config)).toString('base64'),
+    );
+  }
 }
 
-export function ApiProvider({
-  children,
-  host: _host,
-  apiKey: _apiKey,
-  locale: _locale,
-  bearerToken: _bearerToken,
-}: Props): ReactElement {
-  const [host, setHost] = useState<string | null | undefined>(_host);
-  const [apiKey, setApiKey] = useState<string | null | undefined>(_apiKey);
-  const [locale, setLocale] = useState<string | null | undefined>(_locale);
-  const [bearerToken, setBearerToken] = useState<string | null | undefined>(_bearerToken);
+function hydrateConfig(config?: ApiConfig): ApiConfig | undefined {
+  let storedConfig: ApiConfig | undefined;
+  if (window) {
+    const raw = window.localStorage.getItem(API_CONFIG_STORAGE_KEY);
+    if (raw) {
+      storedConfig = JSON.parse(Buffer.from(raw, 'base64').toString()) as ApiConfig;
+    }
+  }
+
+  if (storedConfig) {
+    return storedConfig;
+  }
+
+  storeConfig(config);
+
+  return config;
+}
+
+export interface Props {
+  children?: ReactElement;
+  config?: ApiConfig;
+  persistConfig?: boolean;
+}
+
+export function ApiProvider({ children, config, persistConfig = true }: Props): ReactElement {
+  const [apiConfig, setApiConfig] = useState<ApiConfig | undefined>(
+    persistConfig ? hydrateConfig(config) : config,
+  );
+
+  const setConfig = useCallback(
+    (_config: ApiConfig) => {
+      setApiConfig(_config);
+      if (persistConfig) {
+        storeConfig(_config);
+      }
+    },
+    [persistConfig],
+  );
+
+  const setHost = useCallback(
+    (host: string | null) => {
+      setApiConfig((oldConfig) => {
+        const newConfig: ApiConfig = { ...oldConfig, host };
+        if (persistConfig) {
+          storeConfig(newConfig);
+        }
+        return newConfig;
+      });
+    },
+    [persistConfig],
+  );
+
+  const setApiKey = useCallback(
+    (apiKey: string | null) => {
+      setApiConfig((oldConfig) => {
+        const newConfig: ApiConfig = { ...oldConfig, apiKey };
+        if (persistConfig) {
+          storeConfig(newConfig);
+        }
+        return newConfig;
+      });
+    },
+    [persistConfig],
+  );
+
+  const setLocale = useCallback(
+    (locale: string | null) => {
+      setApiConfig((oldConfig) => {
+        const newConfig: ApiConfig = { ...oldConfig, locale };
+        if (persistConfig) {
+          storeConfig(newConfig);
+        }
+        return newConfig;
+      });
+    },
+    [persistConfig],
+  );
+
+  const setBearerToken = useCallback(
+    (bearerToken: string | null) => {
+      setApiConfig((oldConfig) => {
+        const newConfig: ApiConfig = { ...oldConfig, bearerToken };
+        if (persistConfig) {
+          storeConfig(newConfig);
+        }
+        return newConfig;
+      });
+    },
+    [persistConfig],
+  );
 
   const value = useMemo<ApiContext>(
     () => ({
-      host,
-      apiKey,
-      locale,
-      bearerToken,
+      config: apiConfig,
+      setConfig,
       setHost,
       setApiKey,
       setLocale,
       setBearerToken,
-      init: (
-        configOrHost: ApiConfig | string | null,
-        __apiKey?: string | null,
-        __locale?: string | null,
-        __bearerToken?: string | null,
-      ) => {
-        if (configOrHost && typeof configOrHost === 'object') {
-          if (configOrHost.host !== undefined) {
-            setHost(configOrHost.host);
-          }
-          if (configOrHost.apiKey !== undefined) {
-            setApiKey(configOrHost.apiKey);
-          }
-          if (configOrHost.locale !== undefined) {
-            setLocale(configOrHost.locale);
-          }
-          if (configOrHost.bearerToken !== undefined) {
-            setBearerToken(configOrHost.bearerToken);
-          }
-        } else if (configOrHost !== undefined) {
-          setHost(configOrHost);
-        }
-        if (__apiKey !== undefined) {
-          setApiKey(__apiKey);
-        }
-        if (__locale !== undefined) {
-          setLocale(__locale);
-        }
-        if (__bearerToken !== undefined) {
-          setBearerToken(__bearerToken);
-        }
-      },
-      get: (route: string, params?: RequestParams) =>
-        apiGet(host + route, { apiKey, locale, bearerToken, params }),
+      get: (route: string, params?: RequestParams) => apiGet(route, apiConfig, params),
       post: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPost(host + route, body, { apiKey, locale, bearerToken, params }),
+        apiPost(route, body, apiConfig, params),
       put: (route: string, body: RequestBody, params?: RequestParams) =>
-        apiPut(host + route, body, { apiKey, locale, bearerToken, params }),
-      delete: (route: string, params?: RequestParams) =>
-        apiDelete(host + route, { apiKey, locale, bearerToken, params }),
+        apiPut(route, body, apiConfig, params),
+      delete: (route: string, params?: RequestParams) => apiDelete(route, apiConfig, params),
     }),
-    [bearerToken, host, apiKey, locale],
+    [apiConfig, setApiKey, setBearerToken, setConfig, setHost, setLocale],
   );
 
   return <apiContext.Provider value={value}>{children}</apiContext.Provider>;
