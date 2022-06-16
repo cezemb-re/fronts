@@ -28,13 +28,17 @@ export interface Modal {
   isActive?: boolean;
 }
 
+export interface PushModalParams {
+  component: ModalComponent;
+  type?: ModalType;
+  onDismiss?: () => unknown;
+}
+
+export type PushModalFunction = (params: PushModalParams) => string | undefined;
+
 export interface ModalsState {
   modals: Modal[];
-  pushModal: (
-    component: ModalComponent,
-    type?: ModalType,
-    onDismiss?: () => unknown,
-  ) => string | undefined;
+  pushModal: PushModalFunction;
   dismissModal: (id: string) => void;
 }
 
@@ -69,7 +73,7 @@ function ModalContainer({ id, modal, dismissModal }: ModalContainerProps): React
   useClickOutside(modalElement, onClickOutside);
 
   return (
-    <div className={`cezembre-fronts-modal ${modal.type}`} id={id}>
+    <div className={`cezembre-fronts-modal ${modal.type || 'full'}`} id={id}>
       <div className="container">
         <div ref={modalElement}>
           {modal.component ? <modal.component id={modal.id} dismissModal={dismissModal} /> : null}
@@ -87,23 +91,19 @@ export function ModalsContext({ children }: ContextProps): ReactElement {
   const [modals, setModals] = useState<Modal[]>([]);
 
   const pushModal = useCallback(
-    (
-      component: ModalComponent,
-      type: ModalType | undefined = 'full',
-      onDismiss: (() => unknown) | undefined = undefined,
-    ) => {
+    (params: PushModalParams) => {
       const modal: Modal = {
+        ...params,
         id: Math.random().toString(36).substring(5),
-        component,
-        type,
-        onDismiss,
         isActive: true,
       };
 
-      setModals((_modals: Modal[]) => [
-        ..._modals.map((_modal) => ({ ..._modal, isActive: false })),
-        modal,
-      ]);
+      setTimeout(() => {
+        setModals((_modals: Modal[]) => [
+          ..._modals.map((_modal) => ({ ..._modal, isActive: false })),
+          modal,
+        ]);
+      }, 10);
 
       return modal.id;
     },

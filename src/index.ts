@@ -36,7 +36,15 @@ import Img, {
 } from './ui/image';
 import { BreakPoint, useBreakPoint } from './ui/container';
 import Wrapper, { WrapperProps } from './ui/wrapper';
-import { ModalsContext, useModals, Modal, ModalComponentProps, ModalsState } from './ui/modal';
+import {
+  ModalsContext,
+  useModals,
+  Modal,
+  ModalComponentProps,
+  ModalsState,
+  PushModalParams,
+  PushModalFunction,
+} from './ui/modal';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
 import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geoLocation';
@@ -116,6 +124,8 @@ export type {
   Modal,
   ModalComponentProps,
   ModalsState,
+  PushModalParams,
+  PushModalFunction,
 };
 
 /**

@@ -1,14 +1,24 @@
 import { RefObject, useEffect, useCallback } from 'react';
 
-export type Elements = Element | RefObject<Element> | (Element | RefObject<Element>)[];
+export type Elements =
+  | Element
+  | RefObject<Element>
+  | null
+  | undefined
+  | (Element | RefObject<Element> | null | undefined)[];
 
 export function doesEventTargetContainsElements(event: MouseEvent, elements: Elements): boolean {
+  if (!elements) {
+    return false;
+  }
   if (Array.isArray(elements)) {
     let match = false;
-    elements.forEach((element: Element | RefObject<Element>) => {
-      const e = 'current' in element ? element.current : (element as Element);
-      if (e?.contains(event.target as Node)) {
-        match = true;
+    elements.forEach((element: Element | RefObject<Element> | null | undefined) => {
+      if (element) {
+        const e = 'current' in element ? element.current : (element as Element);
+        if (e?.contains(event.target as Node)) {
+          match = true;
+        }
       }
     });
     return match;
