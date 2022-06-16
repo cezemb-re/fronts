@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { createContext, ReactElement, useCallback, useContext, useMemo, useState } from 'react';
 import httpStatus from 'http-status';
+import base64 from 'base-64';
 
 export interface Model {
   id: string;
@@ -252,10 +253,7 @@ const API_CONFIG_STORAGE_KEY = Buffer.from('cezembre_fronts_api_config').toStrin
 
 function storeConfig(config?: ApiConfig): void {
   if (window) {
-    window.localStorage.setItem(
-      API_CONFIG_STORAGE_KEY,
-      Buffer.from(JSON.stringify(config)).toString('base64'),
-    );
+    window.localStorage.setItem(API_CONFIG_STORAGE_KEY, base64.encode(JSON.stringify(config)));
   }
 }
 
@@ -264,7 +262,7 @@ function hydrateConfig(config?: ApiConfig): ApiConfig | undefined {
   if (window) {
     const raw = window.localStorage.getItem(API_CONFIG_STORAGE_KEY);
     if (raw) {
-      storedConfig = JSON.parse(Buffer.from(raw, 'base64').toString()) as ApiConfig;
+      storedConfig = JSON.parse(base64.decode(raw)) as ApiConfig;
     }
   }
 

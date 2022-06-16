@@ -40,6 +40,7 @@
     "react-router-dom": ">=6.0.0"
   },
   "dependencies": {
+    "base-64": "^1.0.0",
     "http-status": "^1.5.2",
     "lodash": "^4.17.21",
     "resize-observer-polyfill": "^1.5.1"
@@ -64,6 +65,7 @@
     "@storybook/manager-webpack5": "^6.5.7",
     "@storybook/react": "^6.5.7",
     "@storybook/testing-library": "^0.0.11",
+    "@types/base-64": "^1.0.0",
     "@types/draft-js": "^0.11.9",
     "@types/googlemaps": "^3.43.3",
     "@types/lodash.isequal": "^4.5.6",
