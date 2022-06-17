@@ -77,6 +77,7 @@ export {
   useApi,
   ApiProvider,
   isApiError,
+  ApiError,
 };
 
 export type {
@@ -84,7 +85,6 @@ export type {
   PaginatedList,
   FormErrors,
   ApiErrorData,
-  ApiError,
   RequestBody,
   RequestParams,
   ApiConfig,
