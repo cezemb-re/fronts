@@ -15,17 +15,6 @@ import {
 } from './ui/modal';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
-import { GeoLocation, serializeGeoLocation, parseGeoLocation } from './utils/geoLocation';
-import {
-  useGoogleMapsApi,
-  useAutocompleteService,
-  PlacePredictionType,
-  usePlacesService,
-  usePlacePredictions,
-  usePlaceDetails,
-  usePlaceDetailsGetter,
-} from './utils/googleMaps';
-import Place from './utils/place';
 
 /**
  * UI
@@ -64,16 +53,6 @@ export { formatRelativeDate, formatRelativeDateTime };
  * Utils
  */
 
-export {
-  useScript,
-  serializeGeoLocation,
-  parseGeoLocation,
-  usePlacesService,
-  useGoogleMapsApi,
-  useAutocompleteService,
-  usePlacePredictions,
-  usePlaceDetails,
-  usePlaceDetailsGetter,
-};
+export type { ScriptStatus, UseScriptOptions };
 
-export type { ScriptStatus, UseScriptOptions, GeoLocation, Place, PlacePredictionType };
+export { useScript };
