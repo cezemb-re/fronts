@@ -1,5 +1,13 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
-import { createContext, ReactElement, useCallback, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import httpStatus from 'http-status';
 import base64 from 'base-64';
 
@@ -282,9 +290,13 @@ export interface Props {
 }
 
 export function ApiProvider({ children, config, persistConfig = true }: Props): ReactElement {
-  const [apiConfig, setApiConfig] = useState<ApiConfig | undefined>(
-    persistConfig ? hydrateConfig(config) : config,
-  );
+  const [apiConfig, setApiConfig] = useState<ApiConfig | undefined>(config);
+
+  useEffect(() => {
+    if (persistConfig) {
+      setApiConfig(hydrateConfig(config));
+    }
+  }, [config, persistConfig]);
 
   const setConfig = useCallback(
     (_config: ApiConfig) => {
