@@ -7,7 +7,33 @@ interface Props {}
 function App() {
   const { pushModal } = useModals();
   const openModal = useCallback(() => {
-    pushModal({ component: () => <h1>Test</h1> });
+    pushModal({
+      component: ({ dismissModal }) => (
+        <div>
+          <h1>First modal !</h1>
+          <button onClick={dismissModal}>Dismiss !</button>
+        </div>
+      ),
+      onDismiss: () => console.log('First modal dismissed !'),
+    });
+    pushModal({
+      component: ({ dismissModal }) => (
+        <div>
+          <h1>Second modal !</h1>
+          <button onClick={dismissModal}>Dismiss !</button>
+        </div>
+      ),
+      onDismiss: () => console.log('Second modal dismissed !'),
+    });
+    pushModal({
+      component: ({ dismissModal }) => (
+        <div>
+          <h1>Third modal !</h1>
+          <button onClick={dismissModal}>Dismiss !</button>
+        </div>
+      ),
+      onDismiss: () => console.log('Third modal dismissed !'),
+    });
   }, []);
   return <button onClick={openModal}>Open modal</button>;
 }

@@ -65,15 +65,25 @@ function ModalContainer({ id, modal, dismissModal }: ModalContainerProps): React
     if (modal.isActive) {
       dismissModal();
     }
-  }, [dismissModal, modal]);
+  }, [dismissModal, modal.isActive]);
 
   useClickOutside(modalElement, onClickOutside);
+
+  // Hack here: We need to delay the removal of the modal so the outside click doesn't get triggered.
+  // 5ms seems to be a reasonable threshold.
+  const delayedDismissModal = useCallback(() => {
+    if (dismissModal) {
+      setTimeout(dismissModal, 5);
+    }
+  }, [dismissModal]);
 
   return (
     <div className={`cezembre-fronts-modal ${modal.type || 'full'}`} id={id}>
       <div className="container">
         <div ref={modalElement}>
-          {modal.component ? <modal.component id={modal.id} dismissModal={dismissModal} /> : null}
+          {modal.component ? (
+            <modal.component id={modal.id} dismissModal={delayedDismissModal} />
+          ) : null}
         </div>
       </div>
     </div>
@@ -114,12 +124,12 @@ export function ModalsContext({ children }: ContextProps): ReactElement {
         const index = nextModals.findIndex((modal) => modal.id === id);
         if (index !== -1) {
           const { onDismiss } = _modals[index];
+          if (onDismiss) {
+            onDismiss();
+          }
           nextModals.splice(index, 1);
           if (nextModals.length) {
             nextModals[nextModals.length - 1].isActive = true;
-          }
-          if (onDismiss) {
-            onDismiss();
           }
         }
         return nextModals;
