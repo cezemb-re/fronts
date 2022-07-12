@@ -113,13 +113,13 @@ export function ModalsContext({ children }: ContextProps): ReactElement {
         const nextModals = [..._modals];
         const index = nextModals.findIndex((modal) => modal.id === id);
         if (index !== -1) {
-          const modal = _modals[index];
-          if (modal?.onDismiss) {
-            modal.onDismiss();
-          }
+          const { onDismiss } = _modals[index];
           nextModals.splice(index, 1);
           if (nextModals.length) {
             nextModals[nextModals.length - 1].isActive = true;
+          }
+          if (onDismiss) {
+            onDismiss();
           }
         }
         return nextModals;
