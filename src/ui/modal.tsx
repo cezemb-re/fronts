@@ -64,9 +64,6 @@ function ModalContainer({ id, modal, dismissModal }: ModalContainerProps): React
   const onClickOutside = useCallback(() => {
     if (modal.isActive) {
       dismissModal();
-      if (modal.onDismiss) {
-        modal.onDismiss();
-      }
     }
   }, [dismissModal, modal]);
 
@@ -116,6 +113,10 @@ export function ModalsContext({ children }: ContextProps): ReactElement {
         const nextModals = [..._modals];
         const index = nextModals.findIndex((modal) => modal.id === id);
         if (index !== -1) {
+          const modal = _modals[index];
+          if (modal?.onDismiss) {
+            modal.onDismiss();
+          }
           nextModals.splice(index, 1);
           if (nextModals.length) {
             nextModals[nextModals.length - 1].isActive = true;
