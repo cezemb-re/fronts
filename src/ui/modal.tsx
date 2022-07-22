@@ -45,11 +45,11 @@ export interface ModalsState {
 const Context = createContext<ModalsState | undefined>(undefined);
 
 export function useModals(): ModalsState {
-  const modalsState = useContext<ModalsState | undefined>(Context);
-  if (!modalsState) {
+  const modals = useContext<ModalsState | undefined>(Context);
+  if (!modals) {
     throw new Error('useModals() should be used inside <ModalContext> component');
   }
-  return modalsState;
+  return modals;
 }
 
 export interface ModalContainerProps {

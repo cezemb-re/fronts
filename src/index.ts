@@ -2,7 +2,7 @@ import './index.scss';
 import { doesEventTargetContainsElements, useClickOutside } from './ui/interactions';
 import useDOMRect from './ui/domRect';
 import { useScrollProgress, useScrollThreshold, useScrollThresholds } from './ui/scrollProgress';
-import { BreakPoint, useBreakPoint } from './ui/container';
+import { BreakPoint, useScreen, useBreakPoint } from './ui/screens';
 import Wrapper, { WrapperProps } from './ui/wrapper';
 import {
   ModalsContext,
@@ -15,6 +15,7 @@ import {
 } from './ui/modal';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
+import FrontContext, { FrontState, useFront } from './front';
 
 /**
  * UI
@@ -31,6 +32,7 @@ export {
   useBreakPoint,
   Wrapper,
   ModalsContext,
+  useScreen,
   useModals,
 };
 
@@ -56,3 +58,11 @@ export { formatRelativeDate, formatRelativeDateTime };
 export type { ScriptStatus, UseScriptOptions };
 
 export { useScript };
+
+/**
+ * Front
+ */
+
+export type { FrontState };
+
+export { FrontContext, useFront };
