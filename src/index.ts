@@ -9,7 +9,7 @@ import {
   useScroll,
   useScrollProgressThreshold,
   useScrollDistanceThreshold,
-} from './ui/scrollProgress';
+} from './ui/scroll';
 import { BreakPoint, useScreen, useBreakPoint } from './ui/screens';
 import Wrapper, { WrapperProps } from './ui/wrapper';
 import {
