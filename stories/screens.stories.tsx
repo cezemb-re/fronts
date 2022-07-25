@@ -1,18 +1,20 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { JSXElementConstructor } from 'react';
+import { useScreen } from '../src';
 
 interface Props {}
 
 function App() {
+  const screen = useScreen();
   return (
     <div>
-      <h1>Container test</h1>
+      <h1>{screen}</h1>
     </div>
   );
 }
 
 export default {
-  title: 'UI/Container',
+  title: 'UI/Screens',
 } as ComponentMeta<JSXElementConstructor<Props>>;
 
 const Template: ComponentStory<JSXElementConstructor<Props>> = ({}: Props) => <App />;

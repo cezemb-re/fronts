@@ -12,15 +12,6 @@ import {
 } from './ui/scroll';
 import { BreakPoint, useScreen, useBreakPoint } from './ui/screens';
 import Wrapper, { WrapperProps } from './ui/wrapper';
-import {
-  ModalsContext,
-  useModals,
-  Modal,
-  ModalComponentProps,
-  ModalsState,
-  PushModalParams,
-  PushModalFunction,
-} from './ui/modal';
 import { formatRelativeDate, formatRelativeDateTime } from './adapters/time';
 import useScript, { ScriptStatus, UseScriptOptions } from './utils/script';
 import FrontContext, { FrontState, useFront } from './front';
@@ -42,20 +33,10 @@ export {
   BreakPoint,
   useBreakPoint,
   Wrapper,
-  ModalsContext,
   useScreen,
-  useModals,
 };
 
-export type {
-  Scroll,
-  WrapperProps,
-  Modal,
-  ModalComponentProps,
-  ModalsState,
-  PushModalParams,
-  PushModalFunction,
-};
+export type { Scroll, WrapperProps };
 
 /**
  * Adapters
