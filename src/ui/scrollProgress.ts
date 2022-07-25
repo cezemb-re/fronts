@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, RefObject } from 'react';
 
-export function useScrollProgress<E extends Element = HTMLElement>(
+export function useElementScrollProgress<E extends Element = HTMLElement>(
   currentRef?: RefObject<E>,
 ): [RefObject<E>, number, number] {
   const ref = useRef<E>(currentRef?.current || null);
@@ -32,29 +32,32 @@ export function useScrollProgress<E extends Element = HTMLElement>(
   return [ref, progress, progressPx];
 }
 
-export function useScrollThreshold<E extends Element = HTMLElement>(
+export function useElementScrollThreshold<E extends Element = HTMLElement>(
   threshold = 0.2,
   currentRef?: RefObject<E>,
 ): [RefObject<E>, boolean, number, number] {
   const [active, setActive] = useState(false);
 
-  const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
+  const [ref, progress, progressPx] = useElementScrollProgress<E>(currentRef);
 
   useEffect(() => {
-    if (progress >= threshold && !active) setActive(true);
-    else if (progress <= threshold && active) setActive(false);
+    if (progress >= threshold && !active) {
+      setActive(true);
+    } else if (progress <= threshold && active) {
+      setActive(false);
+    }
   }, [progress, threshold, active, setActive]);
 
   return [ref, active, progress, progressPx];
 }
 
-export function useScrollThresholds<E extends Element = HTMLElement>(
+export function useElementScrollThresholds<E extends Element = HTMLElement>(
   thresholds = [0.25],
   currentRef?: RefObject<E>,
 ): [RefObject<E>, Array<boolean>, number, number] {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
-  const [ref, progress, progressPx] = useScrollProgress<E>(currentRef);
+  const [ref, progress, progressPx] = useElementScrollProgress<E>(currentRef);
 
   useEffect(() => {
     let match = false;

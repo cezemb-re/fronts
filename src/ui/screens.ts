@@ -26,28 +26,28 @@ export type Screen =
 export function useScreen(): Screen {
   const retrieveScreen = useCallback((): Screen => {
     const { innerWidth } = window;
-    if (innerWidth >= BreakPoint._4K) {
+    if (innerWidth > BreakPoint._4K) {
       return '4K';
     }
-    if (innerWidth >= BreakPoint.DESKTOP) {
+    if (innerWidth > BreakPoint.DESKTOP) {
       return 'desktop';
     }
-    if (innerWidth >= BreakPoint.LAPTOP_L) {
+    if (innerWidth > BreakPoint.LAPTOP_L) {
       return 'laptop_L';
     }
-    if (innerWidth >= BreakPoint.LAPTOP) {
+    if (innerWidth > BreakPoint.LAPTOP) {
       return 'laptop';
     }
-    if (innerWidth >= BreakPoint.TABLET) {
+    if (innerWidth > BreakPoint.TABLET) {
       return 'tablet';
     }
-    if (innerWidth >= BreakPoint.TABLET_S) {
+    if (innerWidth > BreakPoint.TABLET_S) {
       return 'tablet_S';
     }
-    if (innerWidth >= BreakPoint.MOBILE_L) {
+    if (innerWidth > BreakPoint.MOBILE_L) {
       return 'mobile_L';
     }
-    if (innerWidth >= BreakPoint.MOBILE_M) {
+    if (innerWidth > BreakPoint.MOBILE_M) {
       return 'mobile_M';
     }
     return 'mobile_S';
