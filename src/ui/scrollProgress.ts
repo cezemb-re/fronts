@@ -1,12 +1,17 @@
 import { useState, useRef, useEffect, useCallback, RefObject } from 'react';
 
-export function useElementScrollProgress<E extends Element = HTMLElement>(
+export interface Scroll {
+  progress: number;
+  distance: number;
+}
+
+export function useElementScroll<E extends Element = HTMLElement>(
   currentRef?: RefObject<E>,
-): [RefObject<E>, number, number] {
+): { ref: RefObject<E> } & Scroll {
   const ref = useRef<E>(currentRef?.current || null);
 
   const [progress, setProgress] = useState<number>(0);
-  const [progressPx, setProgressPx] = useState<number>(0);
+  const [distance, setDistance] = useState<number>(0);
 
   const calcProgress = useCallback(() => {
     if (ref.current) {
@@ -14,10 +19,10 @@ export function useElementScrollProgress<E extends Element = HTMLElement>(
 
       if (window.innerHeight > top && bottom > 0) {
         setProgress((window.innerHeight - top) / (height + window.innerHeight));
-        setProgressPx(window.innerHeight - top);
+        setDistance(window.innerHeight - top);
       } else if (bottom < 0) setProgress(1);
     }
-  }, [setProgress, setProgressPx]);
+  }, []);
 
   useEffect(() => {
     calcProgress();
@@ -29,16 +34,16 @@ export function useElementScrollProgress<E extends Element = HTMLElement>(
     };
   });
 
-  return [ref, progress, progressPx];
+  return { ref, progress, distance };
 }
 
-export function useElementScrollThreshold<E extends Element = HTMLElement>(
+export function useElementScrollProgressThreshold<E extends Element = HTMLElement>(
   threshold = 0.2,
   currentRef?: RefObject<E>,
-): [RefObject<E>, boolean, number, number] {
+): { ref: RefObject<E>; active: boolean } & Scroll {
   const [active, setActive] = useState(false);
 
-  const [ref, progress, progressPx] = useElementScrollProgress<E>(currentRef);
+  const { ref, progress, distance } = useElementScroll<E>(currentRef);
 
   useEffect(() => {
     if (progress >= threshold && !active) {
@@ -46,18 +51,18 @@ export function useElementScrollThreshold<E extends Element = HTMLElement>(
     } else if (progress <= threshold && active) {
       setActive(false);
     }
-  }, [progress, threshold, active, setActive]);
+  }, [progress, threshold, active]);
 
-  return [ref, active, progress, progressPx];
+  return { ref, active, progress, distance };
 }
 
-export function useElementScrollThresholds<E extends Element = HTMLElement>(
+export function useElementScrollProgressThresholds<E extends Element = HTMLElement>(
   thresholds = [0.25],
   currentRef?: RefObject<E>,
-): [RefObject<E>, Array<boolean>, number, number] {
+): { ref: RefObject<E>; actives: boolean[] } & Scroll {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
-  const [ref, progress, progressPx] = useElementScrollProgress<E>(currentRef);
+  const { ref, progress, distance } = useElementScroll<E>(currentRef);
 
   useEffect(() => {
     let match = false;
@@ -77,5 +82,59 @@ export function useElementScrollThresholds<E extends Element = HTMLElement>(
     }
   }, [progress, thresholds, actives, setActives]);
 
-  return [ref, actives, progress, progressPx];
+  return { ref, actives, progress, distance };
+}
+
+export function useScroll(): Scroll {
+  const [progress, setProgress] = useState<number>(0);
+  const [distance, setDistance] = useState<number>(0);
+
+  const calcProgress = useCallback(() => {
+    setProgress(window.scrollY / window.innerHeight);
+    setDistance(window.scrollY);
+  }, []);
+
+  useEffect(() => {
+    calcProgress();
+    window.addEventListener('scroll', calcProgress);
+    window.addEventListener('resize', calcProgress);
+    return () => {
+      window.removeEventListener('scroll', calcProgress);
+      window.removeEventListener('resize', calcProgress);
+    };
+  });
+
+  return { progress, distance };
+}
+
+export function useScrollProgressThreshold(threshold = 0.2): { active?: boolean } & Scroll {
+  const [active, setActive] = useState(false);
+
+  const { progress, distance } = useScroll();
+
+  useEffect(() => {
+    if (progress >= threshold && !active) {
+      setActive(true);
+    } else if (progress <= threshold && active) {
+      setActive(false);
+    }
+  }, [progress, threshold, active, setActive]);
+
+  return { active, progress, distance };
+}
+
+export function useScrollDistanceThreshold(threshold: number): { active?: boolean } & Scroll {
+  const [active, setActive] = useState(false);
+
+  const { progress, distance } = useScroll();
+
+  useEffect(() => {
+    if (distance >= threshold && !active) {
+      setActive(true);
+    } else if (distance <= threshold && active) {
+      setActive(false);
+    }
+  }, [distance, threshold, active, setActive]);
+
+  return { active, progress, distance };
 }

@@ -2,9 +2,13 @@ import './index.scss';
 import { doesEventTargetContainsElements, useClickOutside } from './ui/interactions';
 import useDOMRect from './ui/domRect';
 import {
-  useElementScrollProgress,
-  useElementScrollThreshold,
-  useElementScrollThresholds,
+  Scroll,
+  useElementScroll,
+  useElementScrollProgressThreshold,
+  useElementScrollProgressThresholds,
+  useScroll,
+  useScrollProgressThreshold,
+  useScrollDistanceThreshold,
 } from './ui/scrollProgress';
 import { BreakPoint, useScreen, useBreakPoint } from './ui/screens';
 import Wrapper, { WrapperProps } from './ui/wrapper';
@@ -29,9 +33,12 @@ export {
   doesEventTargetContainsElements,
   useClickOutside,
   useDOMRect,
-  useElementScrollProgress,
-  useElementScrollThreshold,
-  useElementScrollThresholds,
+  useElementScroll,
+  useElementScrollProgressThreshold,
+  useElementScrollProgressThresholds,
+  useScroll,
+  useScrollProgressThreshold,
+  useScrollDistanceThreshold,
   BreakPoint,
   useBreakPoint,
   Wrapper,
@@ -41,6 +48,7 @@ export {
 };
 
 export type {
+  Scroll,
   WrapperProps,
   Modal,
   ModalComponentProps,
