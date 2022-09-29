@@ -138,3 +138,7 @@ export function useScrollDistanceThreshold(threshold: number): { active?: boolea
 
   return { active, progress, distance };
 }
+
+export function disableBodyScroll() {
+  //
+}

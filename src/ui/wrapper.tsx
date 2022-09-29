@@ -3,7 +3,7 @@ import { NavLink, To } from 'react-router-dom';
 
 export interface WrapperProps {
   to?: To;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<void> | void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => unknown;
   onFocus?: FocusEventHandler<HTMLElement>;
   onBlur?: FocusEventHandler<HTMLElement>;
   disabled?: boolean;
