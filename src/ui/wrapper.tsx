@@ -1,4 +1,11 @@
-import { FocusEventHandler, MouseEvent, ReactElement, ReactNode } from 'react';
+import {
+  FocusEventHandler,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+  forwardRef,
+  ForwardedRef,
+} from 'react';
 import { NavLink, To } from 'react-router-dom';
 
 export interface WrapperProps {
@@ -17,21 +24,24 @@ export interface Props extends WrapperProps {
   className?: string;
 }
 
-export default function Wrapper({
-  children,
-  className,
-  to,
-  onClick,
-  onFocus,
-  onBlur,
-  disabled,
-  type = 'button',
-  href,
-  target,
-}: Props): ReactElement {
+export default forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function Wrapper(
+  {
+    children,
+    className,
+    to,
+    onClick,
+    onFocus,
+    onBlur,
+    disabled,
+    type = 'button',
+    href,
+    target,
+  }: Props,
+  ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
+): ReactElement {
   if (to) {
     return (
-      <NavLink to={to} className={className}>
+      <NavLink ref={ref as ForwardedRef<HTMLAnchorElement>} to={to} className={className}>
         {children}
       </NavLink>
     );
@@ -39,6 +49,7 @@ export default function Wrapper({
   if (onClick) {
     return (
       <button
+        ref={ref as ForwardedRef<HTMLButtonElement>}
         type={type}
         onClick={onClick}
         onFocus={onFocus}
@@ -51,10 +62,14 @@ export default function Wrapper({
   }
   if (href) {
     return (
-      <a href={href} target={target} className={className}>
+      <a
+        ref={ref as ForwardedRef<HTMLAnchorElement>}
+        href={href}
+        target={target}
+        className={className}>
         {children}
       </a>
     );
   }
   return <div className={className}>{children}</div>;
-}
+});
