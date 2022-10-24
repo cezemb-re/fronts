@@ -25,18 +25,7 @@ export interface Props extends WrapperProps {
 }
 
 export default forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function Wrapper(
-  {
-    children,
-    className,
-    to,
-    onClick,
-    onFocus,
-    onBlur,
-    disabled,
-    type = 'button',
-    href,
-    target,
-  }: Props,
+  { children, className, to, onClick, onFocus, onBlur, disabled, type, href, target }: Props,
   ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
 ): ReactElement {
   if (to) {
