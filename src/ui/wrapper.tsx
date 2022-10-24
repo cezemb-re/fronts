@@ -46,7 +46,7 @@ export default forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function
       </NavLink>
     );
   }
-  if (onClick) {
+  if (onClick || type) {
     return (
       <button
         ref={ref as ForwardedRef<HTMLButtonElement>}
