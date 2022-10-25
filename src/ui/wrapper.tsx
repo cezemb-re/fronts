@@ -39,7 +39,7 @@ export default forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function
     return (
       <button
         ref={ref as ForwardedRef<HTMLButtonElement>}
-        type={type}
+        type={type || 'button'}
         onClick={onClick}
         onFocus={onFocus}
         onBlur={onBlur}
