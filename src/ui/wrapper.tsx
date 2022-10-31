@@ -24,41 +24,47 @@ export interface Props extends WrapperProps {
   className?: string;
 }
 
-export default forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function Wrapper(
-  { children, className, to, onClick, onFocus, onBlur, disabled, type, href, target }: Props,
-  ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
-): ReactElement {
-  if (to) {
+export default forwardRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement, Props>(
+  function Wrapper(
+    { children, className, to, onClick, onFocus, onBlur, disabled, type, href, target }: Props,
+    ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement>,
+  ): ReactElement {
+    if (to) {
+      return (
+        <NavLink ref={ref as ForwardedRef<HTMLAnchorElement>} to={to} className={className}>
+          {children}
+        </NavLink>
+      );
+    }
+    if (onClick || type) {
+      return (
+        <button
+          ref={ref as ForwardedRef<HTMLButtonElement>}
+          type={type || 'button'}
+          onClick={onClick}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          className={className}
+          disabled={disabled}>
+          {children}
+        </button>
+      );
+    }
+    if (href) {
+      return (
+        <a
+          ref={ref as ForwardedRef<HTMLAnchorElement>}
+          href={href}
+          target={target}
+          className={className}>
+          {children}
+        </a>
+      );
+    }
     return (
-      <NavLink ref={ref as ForwardedRef<HTMLAnchorElement>} to={to} className={className}>
+      <div className={className} ref={ref as ForwardedRef<HTMLDivElement>}>
         {children}
-      </NavLink>
+      </div>
     );
-  }
-  if (onClick || type) {
-    return (
-      <button
-        ref={ref as ForwardedRef<HTMLButtonElement>}
-        type={type || 'button'}
-        onClick={onClick}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        className={className}
-        disabled={disabled}>
-        {children}
-      </button>
-    );
-  }
-  if (href) {
-    return (
-      <a
-        ref={ref as ForwardedRef<HTMLAnchorElement>}
-        href={href}
-        target={target}
-        className={className}>
-        {children}
-      </a>
-    );
-  }
-  return <div className={className}>{children}</div>;
-});
+  },
+);
