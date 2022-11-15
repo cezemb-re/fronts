@@ -18,7 +18,7 @@ export interface WrapperProps {
   disabled?: boolean;
   type?: 'submit' | 'reset' | 'button';
   href?: string;
-  rel?: string | undefined;
+  rel?: string;
   target?: HTMLAttributeAnchorTarget;
   referrerPolicy?: HTMLAttributeReferrerPolicy;
 }
