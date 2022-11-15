@@ -20,7 +20,7 @@ export interface WrapperProps {
   href?: string;
   rel?: string | undefined;
   target?: HTMLAttributeAnchorTarget;
-  referrerPolicy?: HTMLAttributeReferrerPolicy | undefined;
+  referrerPolicy?: HTMLAttributeReferrerPolicy;
 }
 
 export interface Props extends WrapperProps {
