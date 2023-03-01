@@ -21,75 +21,73 @@ export interface WrapperProps {
   rel?: string;
   target?: HTMLAttributeAnchorTarget;
   referrerPolicy?: HTMLAttributeReferrerPolicy;
-}
-
-export interface Props extends WrapperProps {
   children: ReactNode;
   className?: string;
 }
 
-export const Wrapper = forwardRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement, Props>(
-  function Wrapper(
-    {
-      children,
-      className,
-      to,
-      onClick,
-      onFocus,
-      onBlur,
-      disabled,
-      type,
-      href,
-      target,
-      rel,
-      referrerPolicy,
-    }: Props,
-    ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement>,
-  ): ReactElement {
-    if (to) {
-      return (
-        <NavLink
-          ref={ref as ForwardedRef<HTMLAnchorElement>}
-          to={to}
-          className={className}
-          target={target}
-          rel={rel}
-          referrerPolicy={referrerPolicy}>
-          {children}
-        </NavLink>
-      );
-    }
-    if (onClick || type) {
-      return (
-        <button
-          ref={ref as ForwardedRef<HTMLButtonElement>}
-          type={type || 'button'}
-          onClick={onClick}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          className={className}
-          disabled={disabled}>
-          {children}
-        </button>
-      );
-    }
-    if (href) {
-      return (
-        <a
-          ref={ref as ForwardedRef<HTMLAnchorElement>}
-          href={href}
-          target={target}
-          rel={rel}
-          referrerPolicy={referrerPolicy}
-          className={className}>
-          {children}
-        </a>
-      );
-    }
+export const Wrapper = forwardRef<
+  HTMLAnchorElement | HTMLButtonElement | HTMLDivElement,
+  WrapperProps
+>(function Wrapper(
+  {
+    children,
+    className,
+    to,
+    onClick,
+    onFocus,
+    onBlur,
+    disabled,
+    type,
+    href,
+    target,
+    rel,
+    referrerPolicy,
+  }: WrapperProps,
+  ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement>,
+): ReactElement {
+  if (to) {
     return (
-      <div className={className} ref={ref as ForwardedRef<HTMLDivElement>}>
+      <NavLink
+        ref={ref as ForwardedRef<HTMLAnchorElement>}
+        to={to}
+        className={className}
+        target={target}
+        rel={rel}
+        referrerPolicy={referrerPolicy}>
         {children}
-      </div>
+      </NavLink>
     );
-  },
-);
+  }
+  if (onClick || type) {
+    return (
+      <button
+        ref={ref as ForwardedRef<HTMLButtonElement>}
+        type={type || 'button'}
+        onClick={onClick}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className={className}
+        disabled={disabled}>
+        {children}
+      </button>
+    );
+  }
+  if (href) {
+    return (
+      <a
+        ref={ref as ForwardedRef<HTMLAnchorElement>}
+        href={href}
+        target={target}
+        rel={rel}
+        referrerPolicy={referrerPolicy}
+        className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <div className={className} ref={ref as ForwardedRef<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});

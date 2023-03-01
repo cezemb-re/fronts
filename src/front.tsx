@@ -7,7 +7,7 @@ export interface FrontState {
 
 const Context = createContext<FrontState | undefined>(undefined);
 
-export interface Props {
+export interface FrontProps {
   children?: ReactNode;
 }
 
@@ -19,7 +19,7 @@ export function useFront(): FrontState {
   return front;
 }
 
-export function FrontContext({ children }: Props): ReactElement {
+export function Front({ children }: FrontProps): ReactElement {
   const screen = useScreen();
 
   const value = useMemo<FrontState>(
