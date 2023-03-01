@@ -21,7 +21,7 @@ export interface WrapperProps {
   rel?: string;
   target?: HTMLAttributeAnchorTarget;
   referrerPolicy?: HTMLAttributeReferrerPolicy;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
