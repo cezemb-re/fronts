@@ -28,7 +28,7 @@ export interface Props extends WrapperProps {
   className?: string;
 }
 
-export default forwardRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement, Props>(
+export forwardRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement, Props>(
   function Wrapper(
     {
       children,

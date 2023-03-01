@@ -1,7 +1,7 @@
 import { useState, useEffect, RefObject, useRef, MutableRefObject } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
-export default function useDOMRect<T extends Element>(
+export function useDOMRect<T extends Element>(
   ref: MutableRefObject<T | undefined> | RefObject<T | undefined>,
 ): DOMRect | undefined {
   const [DOMRect, setDOMRect] = useState<DOMRect | undefined>();

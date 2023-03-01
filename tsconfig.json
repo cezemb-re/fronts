@@ -1,8 +1,9 @@
 {
-  "include": ["./src"],
+  "include": ["./src/**/*", "./stories/**/*"],
   "exclude": ["dist"],
   "compilerOptions": {
-    "target": "esnext", // Let Babel deal with transpiling new language features
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
@@ -12,7 +13,10 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "rootDir": "./src",
     "outDir": "./dist",
-    "declarationDir": "."
+    "declarationDir": ".",
+    "isolatedModules": true,
+    "resolveJsonModule": true
   }
 }

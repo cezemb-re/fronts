@@ -1,5 +1,5 @@
 import { createContext, ReactElement, ReactNode, useContext, useMemo } from 'react';
-import { Screen, useScreen } from './ui/screens';
+import { Screen, useScreen } from './ui';
 
 export interface FrontState {
   screen: Screen;
@@ -19,7 +19,7 @@ export function useFront(): FrontState {
   return front;
 }
 
-export default function FrontContext({ children }: Props): ReactElement {
+export function FrontContext({ children }: Props): ReactElement {
   const screen = useScreen();
 
   const value = useMemo<FrontState>(

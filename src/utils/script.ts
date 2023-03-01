@@ -11,7 +11,7 @@ export interface UseScriptOptions {
   key?: string;
 }
 
-export default function useScript(src: string, options?: UseScriptOptions): ScriptStatus {
+export function useScript(src: string, options?: UseScriptOptions): ScriptStatus {
   const [pending, setPending] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
