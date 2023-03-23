@@ -2,8 +2,6 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { JSXElementConstructor } from 'react';
 import { useScreen } from '../src';
 
-interface Props {}
-
 function App() {
   const screen = useScreen();
   return (
@@ -15,9 +13,9 @@ function App() {
 
 export default {
   title: 'UI/Screens',
-} as ComponentMeta<JSXElementConstructor<Props>>;
+} as ComponentMeta<JSXElementConstructor<unknown>>;
 
-const Template: ComponentStory<JSXElementConstructor<Props>> = ({}: Props) => <App />;
+const Template: ComponentStory<JSXElementConstructor<unknown>> = () => <App />;
 
 export const Default = Template.bind({});
 
