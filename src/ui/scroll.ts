@@ -194,10 +194,11 @@ export function useElementScroll<E extends Element = HTMLElement>(
 
 export function useElementScrollRemainsThreshold<E extends Element = HTMLElement>(
   element?: E,
-  threshold = 40,
+  threshold = 100,
   trigger?: () => unknown,
 ): { ref: RefObject<E>; active?: boolean } & Scroll {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState<boolean>(false);
+  const [pending, setPending] = useState<boolean>(false);
 
   const { ref, distance, progress, remains } = useElementScroll<E>(element);
 
@@ -213,15 +214,44 @@ export function useElementScrollRemainsThreshold<E extends Element = HTMLElement
   useEffect(() => {
     if (remains !== undefined) {
       if (remains <= threshold && !active) {
-        if (debouncedTrigger) {
-          debouncedTrigger();
+        if (debouncedTrigger && !pending) {
+          const res = debouncedTrigger();
+          if (
+            res &&
+            typeof res === 'object' &&
+            'finally' in res &&
+            res.finally &&
+            typeof res.finally === 'function'
+          ) {
+            setPending(true);
+            res.finally(() => setPending(false));
+          }
         }
         setActive(true);
       } else if (remains > threshold && active) {
         setActive(false);
       }
     }
-  }, [distance, threshold, active, setActive, remains, debouncedTrigger]);
+  }, [distance, threshold, active, setActive, remains, debouncedTrigger, pending]);
 
   return { ref, active, progress, distance, remains };
+}
+
+export interface InfiniteScrollParams<E extends Element = HTMLElement> {
+  element?: E;
+  loadNextPage?: () => unknown;
+  threshold?: number;
+}
+
+export function useInfiniteScroll<E extends Element = HTMLElement>(
+  params?: InfiniteScrollParams<E>,
+): {
+  ref: RefObject<E>;
+  active?: boolean;
+} & Scroll {
+  return useElementScrollRemainsThreshold<E>(
+    params?.element,
+    params?.threshold,
+    params?.loadNextPage,
+  );
 }
