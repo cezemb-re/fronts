@@ -7,7 +7,7 @@ export interface Scroll {
   remains?: number;
 }
 
-export function useWindowElementScrollPosition<E extends Element = HTMLElement>(
+export function useWindowElementScroll<E extends Element = HTMLElement>(
   element?: E,
 ): { ref: RefObject<E> } & Scroll {
   const ref = useRef<E>(element || null);
@@ -24,6 +24,7 @@ export function useWindowElementScrollPosition<E extends Element = HTMLElement>(
       if (window.innerHeight > top && bottom > 0) {
         setProgress((window.innerHeight - top) / (height + window.innerHeight));
         setDistance(window.innerHeight - top);
+        setRemains(bottom - window.innerHeight);
       } else if (bottom < 0) setProgress(1);
     }
   }, []);
@@ -31,9 +32,11 @@ export function useWindowElementScrollPosition<E extends Element = HTMLElement>(
   useEffect(() => {
     calcProgress();
     window.addEventListener('scroll', calcProgress);
+    window.addEventListener('touchmove', calcProgress);
     window.addEventListener('resize', calcProgress);
     return () => {
       window.removeEventListener('scroll', calcProgress);
+      window.removeEventListener('touchmove', calcProgress);
       window.removeEventListener('resize', calcProgress);
     };
   });
@@ -47,7 +50,7 @@ export function useWindowElementScrollProgressThreshold<E extends Element = HTML
 ): { ref: RefObject<E>; active: boolean } & Scroll {
   const [active, setActive] = useState(false);
 
-  const { ref, progress, distance, remains } = useWindowElementScrollPosition<E>(element);
+  const { ref, progress, distance, remains } = useWindowElementScroll<E>(element);
 
   useEffect(() => {
     if (progress !== undefined) {
@@ -68,7 +71,7 @@ export function useWindowElementScrollProgressThresholds<E extends Element = HTM
 ): { ref: RefObject<E>; actives: boolean[] } & Scroll {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
-  const { ref, progress, distance, remains } = useWindowElementScrollPosition<E>(element);
+  const { ref, progress, distance, remains } = useWindowElementScroll<E>(element);
 
   useEffect(() => {
     let match = false;
@@ -93,6 +96,51 @@ export function useWindowElementScrollProgressThresholds<E extends Element = HTM
   return { ref, actives, progress, distance, remains };
 }
 
+export function useWindowElementScrollRemainsThreshold<E extends Element = HTMLElement>(
+  element?: E,
+  threshold = 100,
+  trigger?: () => unknown,
+): { ref: RefObject<E>; active: boolean } & Scroll {
+  const [active, setActive] = useState(false);
+  const [pending, setPending] = useState(false);
+
+  const { ref, progress, distance, remains } = useWindowElementScroll<E>(element);
+
+  const debouncedTrigger = useMemo<_.DebouncedFuncLeading<() => unknown> | undefined>(() => {
+    return trigger
+      ? _.debounce<() => unknown>(trigger, 500, {
+          leading: true,
+          trailing: false,
+        })
+      : undefined;
+  }, [trigger]);
+
+  useEffect(() => {
+    if (remains !== undefined) {
+      if (remains <= threshold && !active) {
+        if (debouncedTrigger && !pending) {
+          const res = debouncedTrigger();
+          if (
+            res &&
+            typeof res === 'object' &&
+            'finally' in res &&
+            res.finally &&
+            typeof res.finally === 'function'
+          ) {
+            setPending(true);
+            res.finally(() => setPending(false));
+          }
+        }
+        setActive(true);
+      } else if (remains > threshold && active) {
+        setActive(false);
+      }
+    }
+  }, [distance, threshold, active, setActive, remains, debouncedTrigger, pending]);
+
+  return { ref, active, progress, distance, remains };
+}
+
 export function useWindowScroll(): Scroll {
   const [progress, setProgress] = useState<number | undefined>();
   const [distance, setDistance] = useState<number | undefined>();
@@ -110,9 +158,11 @@ export function useWindowScroll(): Scroll {
   useEffect(() => {
     calcProgress();
     window.addEventListener('scroll', calcProgress);
+    window.addEventListener('touchmove', calcProgress);
     window.addEventListener('resize', calcProgress);
     return () => {
       window.removeEventListener('scroll', calcProgress);
+      window.removeEventListener('touchmove', calcProgress);
       window.removeEventListener('resize', calcProgress);
     };
   });
@@ -184,8 +234,10 @@ export function useElementScroll<E extends Element = HTMLElement>(
     calcProgress();
     const { current } = ref;
     current?.addEventListener('scroll', calcProgress);
+    current?.addEventListener('touchmove', calcProgress);
     return () => {
       current?.removeEventListener('scroll', calcProgress);
+      current?.removeEventListener('touchmove', calcProgress);
     };
   }, [calcProgress]);
 
@@ -243,13 +295,26 @@ export interface InfiniteScrollParams<E extends Element = HTMLElement> {
   threshold?: number;
 }
 
-export function useInfiniteScroll<E extends Element = HTMLElement>(
+export function useElementInfiniteScroll<E extends Element = HTMLElement>(
   params?: InfiniteScrollParams<E>,
 ): {
   ref: RefObject<E>;
   active?: boolean;
 } & Scroll {
   return useElementScrollRemainsThreshold<E>(
+    params?.element,
+    params?.threshold,
+    params?.loadNextPage,
+  );
+}
+
+export function useWindowInfiniteScroll<E extends Element = HTMLElement>(
+  params?: InfiniteScrollParams<E>,
+): {
+  ref: RefObject<E>;
+  active?: boolean;
+} & Scroll {
+  return useWindowElementScrollRemainsThreshold<E>(
     params?.element,
     params?.threshold,
     params?.loadNextPage,

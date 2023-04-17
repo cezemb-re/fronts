@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from 'react';
-import { useElementScrollRemainsThreshold } from '../src';
+import { useWindowInfiniteScroll } from '../src';
 
 interface Page {
   id: string;
@@ -10,15 +10,16 @@ interface Page {
 function App() {
   const [pages, setPages] = useState<number>(1);
 
-  const trigger = useCallback(() => {
+  const loadNextPage = useCallback(() => {
     setPages((p) => {
       console.log('New page: ', p + 1);
       return p + 1;
     });
   }, []);
 
-  const { ref, distance, progress, remains, active } =
-    useElementScrollRemainsThreshold<HTMLDivElement>(undefined, 40, trigger);
+  const { ref, distance, progress, remains, active } = useWindowInfiniteScroll<HTMLDivElement>({
+    loadNextPage,
+  });
 
   const book = useMemo<Page[]>(() => {
     return new Array(pages).fill(null).map((p, i) => ({
@@ -69,7 +70,7 @@ function App() {
       <p>Progress: {progress}</p>
       <p>Remains: {remains}</p>
       <p>Active: {active ? 'True' : 'False'}</p>
-      <div ref={ref} style={{ height: 400, background: 'pink', overflow: 'auto' }}>
+      <div ref={ref} style={{ background: 'pink' }}>
         {book.map(({ id, content }) => (
           <div key={id}>{content}</div>
         ))}
