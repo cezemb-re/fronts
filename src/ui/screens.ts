@@ -25,12 +25,9 @@ export type Screen =
 
 export function useScreen(): Screen | undefined {
   const getScreen = useCallback((): Screen | undefined => {
-    if (!window) {
-      console.log('Here !');
+    if (typeof window === 'undefined') {
       return undefined;
     }
-
-    console.log('There !', window);
 
     const { innerWidth } = window;
 
@@ -69,9 +66,13 @@ export function useScreen(): Screen | undefined {
 
   useEffect(() => {
     defineScreen();
-    window?.addEventListener('resize', defineScreen);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', defineScreen);
+    }
     return () => {
-      window?.removeEventListener('resize', defineScreen);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', defineScreen);
+      }
     };
   }, [defineScreen]);
 
@@ -93,9 +94,13 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
 
   useEffect(() => {
     calcBreakingPoint();
-    window?.addEventListener('resize', calcBreakingPoint);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', calcBreakingPoint);
+    }
     return () => {
-      window?.removeEventListener('resize', calcBreakingPoint);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', calcBreakingPoint);
+      }
     };
   }, [calcBreakingPoint]);
 
