@@ -26,10 +26,12 @@ export type Screen =
 export function useScreen(): Screen | undefined {
   const getScreen = useCallback((): Screen | undefined => {
     if (!window) {
+      console.log('There !');
       return undefined;
     }
 
     const { innerWidth } = window;
+
     if (innerWidth <= BreakPoint.MOBILE_S) {
       return 'mobile_S';
     }
