@@ -56,26 +56,27 @@ export default [
     ],
     output: [
       {
+        name: pkg.name,
         file: pkg.main,
+        format: 'es',
+      },
+      {
+        name: pkg.name,
+        file: pkg['main:min'],
+        format: 'es',
+        plugins: [terser()]
+      },
+      {
+        file: pkg.cjs,
         format: 'cjs',
       },
-      { name: pkg.name, file: pkg.module, format: 'es' },
       {
         name: pkg.name,
-        file: pkg.browser,
+        file: pkg.umd,
         format: 'umd',
         globals: {
           react: 'React',
         },
-      },
-      {
-        name: pkg.name,
-        file: pkg['browser:min'],
-        format: 'umd',
-        globals: {
-          react: 'React',
-        },
-        plugins: [terser()],
       },
     ],
   },
