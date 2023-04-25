@@ -2,7 +2,7 @@ import { createContext, ReactElement, ReactNode, useContext, useMemo } from 'rea
 import { Screen, useScreen } from './ui';
 
 export interface FrontState {
-  screen: Screen;
+  screen?: Screen;
 }
 
 const Context = createContext<FrontState | undefined>(undefined);
