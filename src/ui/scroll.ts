@@ -18,7 +18,7 @@ export function useWindowElementScroll<E extends Element = HTMLElement>(
   const [remains, setRemains] = useState<number | undefined>();
 
   const calcProgress = useCallback(() => {
-    if (ref.current) {
+    if (ref.current && window) {
       const { top, bottom, height } = ref.current.getBoundingClientRect();
 
       if (window.innerHeight > top && bottom > 0) {
@@ -31,13 +31,13 @@ export function useWindowElementScroll<E extends Element = HTMLElement>(
 
   useEffect(() => {
     calcProgress();
-    window.addEventListener('scroll', calcProgress);
-    window.addEventListener('touchmove', calcProgress);
-    window.addEventListener('resize', calcProgress);
+    window?.addEventListener('scroll', calcProgress);
+    window?.addEventListener('touchmove', calcProgress);
+    window?.addEventListener('resize', calcProgress);
     return () => {
-      window.removeEventListener('scroll', calcProgress);
-      window.removeEventListener('touchmove', calcProgress);
-      window.removeEventListener('resize', calcProgress);
+      window?.removeEventListener('scroll', calcProgress);
+      window?.removeEventListener('touchmove', calcProgress);
+      window?.removeEventListener('resize', calcProgress);
     };
   });
 
@@ -147,23 +147,25 @@ export function useWindowScroll(): Scroll {
   const [remains, setRemains] = useState<number | undefined>();
 
   const calcProgress = useCallback(() => {
-    setDistance(window.scrollY);
-    const scrollableDistance = document.body.offsetHeight - window.innerHeight;
-    if (scrollableDistance) {
-      setProgress(window.scrollY / scrollableDistance);
+    if (window) {
+      setDistance(window.scrollY);
+      const scrollableDistance = document.body.offsetHeight - window.innerHeight;
+      if (scrollableDistance) {
+        setProgress(window.scrollY / scrollableDistance);
+      }
+      setRemains(scrollableDistance - window.scrollY);
     }
-    setRemains(scrollableDistance - window.scrollY);
   }, []);
 
   useEffect(() => {
     calcProgress();
-    window.addEventListener('scroll', calcProgress);
-    window.addEventListener('touchmove', calcProgress);
-    window.addEventListener('resize', calcProgress);
+    window?.addEventListener('scroll', calcProgress);
+    window?.addEventListener('touchmove', calcProgress);
+    window?.addEventListener('resize', calcProgress);
     return () => {
-      window.removeEventListener('scroll', calcProgress);
-      window.removeEventListener('touchmove', calcProgress);
-      window.removeEventListener('resize', calcProgress);
+      window?.removeEventListener('scroll', calcProgress);
+      window?.removeEventListener('touchmove', calcProgress);
+      window?.removeEventListener('resize', calcProgress);
     };
   });
 

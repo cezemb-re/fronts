@@ -38,8 +38,10 @@ export function useClickOutside(elements: Elements, callback: (event: MouseEvent
   );
 
   useEffect(() => {
-    window.addEventListener<'click'>('click', onClick);
+    window?.addEventListener<'click'>('click', onClick);
 
-    return () => window.removeEventListener<'click'>('click', onClick);
+    return () => {
+      window?.removeEventListener<'click'>('click', onClick);
+    };
   }, [onClick]);
 }

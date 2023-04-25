@@ -23,8 +23,12 @@ export type Screen =
   | 'mobile_M'
   | 'mobile_S';
 
-export function useScreen(): Screen {
-  const retrieveScreen = useCallback((): Screen => {
+export function useScreen(): Screen | undefined {
+  const getScreen = useCallback((): Screen | undefined => {
+    if (!window) {
+      return undefined;
+    }
+
     const { innerWidth } = window;
     if (innerWidth <= BreakPoint.MOBILE_S) {
       return 'mobile_S';
@@ -53,16 +57,18 @@ export function useScreen(): Screen {
     return '4K';
   }, []);
 
-  const [screen, setScreen] = useState<Screen>(retrieveScreen());
+  const [screen, setScreen] = useState<Screen | undefined>(getScreen());
 
   const defineScreen = useCallback(() => {
-    setScreen(retrieveScreen);
-  }, [retrieveScreen]);
+    setScreen(getScreen());
+  }, [getScreen]);
 
   useEffect(() => {
     defineScreen();
-    window.addEventListener('resize', defineScreen);
-    return () => window.removeEventListener('resize', defineScreen);
+    window?.addEventListener('resize', defineScreen);
+    return () => {
+      window?.removeEventListener('resize', defineScreen);
+    };
   }, [defineScreen]);
 
   return screen;
@@ -72,14 +78,21 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
   const [broke, setBroke] = useState<boolean>(false);
 
   const calcBreakingPoint = useCallback(() => {
-    if (window.innerWidth <= breakPoint && !broke) setBroke(true);
-    else if (window.innerWidth > breakPoint && broke) setBroke(false);
+    if (window) {
+      if (window.innerWidth <= breakPoint && !broke) {
+        setBroke(true);
+      } else if (window.innerWidth > breakPoint && broke) {
+        setBroke(false);
+      }
+    }
   }, [breakPoint, broke]);
 
   useEffect(() => {
     calcBreakingPoint();
-    window.addEventListener('resize', calcBreakingPoint);
-    return () => window.removeEventListener('resize', calcBreakingPoint);
+    window?.addEventListener('resize', calcBreakingPoint);
+    return () => {
+      window?.removeEventListener('resize', calcBreakingPoint);
+    };
   }, [calcBreakingPoint]);
 
   return broke;
