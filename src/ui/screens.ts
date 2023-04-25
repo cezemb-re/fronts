@@ -26,9 +26,11 @@ export type Screen =
 export function useScreen(): Screen | undefined {
   const getScreen = useCallback((): Screen | undefined => {
     if (!window) {
-      console.log('There !');
+      console.log('Here !');
       return undefined;
     }
+
+    console.log('There !', window);
 
     const { innerWidth } = window;
 
