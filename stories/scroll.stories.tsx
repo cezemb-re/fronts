@@ -1,5 +1,4 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from 'react';
+import { ReactElement, useCallback, useMemo, useState } from 'react';
 import { useWindowInfiniteScroll } from '../src';
 
 interface Page {
@@ -7,7 +6,11 @@ interface Page {
   content: ReactElement;
 }
 
-function App() {
+export default {
+  title: 'UI/Scroll',
+};
+
+function Template() {
   const [pages, setPages] = useState<number>(1);
 
   const loadNextPage = useCallback(() => {
@@ -78,11 +81,5 @@ function App() {
     </div>
   );
 }
-
-export default {
-  title: 'UI/Scroll',
-} as ComponentMeta<JSXElementConstructor<unknown>>;
-
-const Template: ComponentStory<JSXElementConstructor<unknown>> = () => <App />;
 
 export const Default = Template.bind({});

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, RefObject, useMemo } from 'react';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 
 export interface Scroll {
   progress?: number;
@@ -108,7 +108,7 @@ export function useWindowElementScrollRemainsThreshold<E extends Element = HTMLE
 
   const debouncedTrigger = useMemo<_.DebouncedFuncLeading<() => unknown> | undefined>(() => {
     return trigger
-      ? _.debounce<() => unknown>(trigger, 500, {
+      ? debounce<() => unknown>(trigger, 500, {
           leading: true,
           trailing: false,
         })
@@ -256,7 +256,7 @@ export function useElementScrollRemainsThreshold<E extends Element = HTMLElement
 
   const debouncedTrigger = useMemo<_.DebouncedFuncLeading<() => unknown> | undefined>(() => {
     return trigger
-      ? _.debounce<() => unknown>(trigger, 500, {
+      ? debounce<() => unknown>(trigger, 500, {
           leading: true,
           trailing: false,
         })

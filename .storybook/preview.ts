@@ -1,5 +1,3 @@
-import '../src/index.scss';
-
 export const parameters = {
   backgrounds: {
     default: 'light',

@@ -8,16 +8,16 @@ import {
   HTMLAttributeAnchorTarget,
   HTMLAttributeReferrerPolicy,
 } from 'react';
-import { NavLink, To } from 'react-router-dom';
+import Link from 'next/link';
+import { UrlObject } from 'url';
 
 export interface WrapperProps {
-  to?: To;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => unknown;
   onFocus?: FocusEventHandler<HTMLElement>;
   onBlur?: FocusEventHandler<HTMLElement>;
   disabled?: boolean;
   type?: 'submit' | 'reset' | 'button';
-  href?: string;
+  href?: string | UrlObject;
   rel?: string;
   target?: HTMLAttributeAnchorTarget;
   referrerPolicy?: HTMLAttributeReferrerPolicy;
@@ -32,7 +32,6 @@ export const Wrapper = forwardRef<
   {
     children,
     className,
-    to,
     onClick,
     onFocus,
     onBlur,
@@ -45,19 +44,6 @@ export const Wrapper = forwardRef<
   }: WrapperProps,
   ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement>,
 ): ReactElement {
-  if (to) {
-    return (
-      <NavLink
-        ref={ref as ForwardedRef<HTMLAnchorElement>}
-        to={to}
-        className={className}
-        target={target}
-        rel={rel}
-        referrerPolicy={referrerPolicy}>
-        {children}
-      </NavLink>
-    );
-  }
   if (onClick || type) {
     return (
       <button
@@ -74,7 +60,7 @@ export const Wrapper = forwardRef<
   }
   if (href) {
     return (
-      <a
+      <Link
         ref={ref as ForwardedRef<HTMLAnchorElement>}
         href={href}
         target={target}
@@ -82,7 +68,7 @@ export const Wrapper = forwardRef<
         referrerPolicy={referrerPolicy}
         className={className}>
         {children}
-      </a>
+      </Link>
     );
   }
   return (
