@@ -2,7 +2,6 @@ import path from 'path';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import typescript from '@rollup/plugin-typescript';
 import image from '@rollup/plugin-image';
@@ -58,25 +57,15 @@ export default [
       {
         name: pkg.name,
         file: pkg.main,
-        format: 'es',
-      },
-      {
-        name: pkg.name,
-        file: pkg['main:min'],
-        format: 'es',
-        plugins: [terser()]
-      },
-      {
-        file: pkg.cjs,
-        format: 'cjs',
-      },
-      {
-        name: pkg.name,
-        file: pkg.umd,
         format: 'umd',
         globals: {
           react: 'React',
         },
+      },
+      {
+        name: pkg.name,
+        file: pkg.module,
+        format: 'es',
       },
     ],
   },
