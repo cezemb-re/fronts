@@ -7,6 +7,7 @@ import typescript from '@rollup/plugin-typescript';
 import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy';
+import terser from '@rollup/plugin-terser';
 import autoprefixer from 'autoprefixer';
 import postcssUrl from 'postcss-url';
 import pkg from './package.json' assert { type: 'json' };
@@ -55,8 +56,17 @@ export default [
     ],
     output: [
       {
-        name: pkg.name,
         file: pkg.main,
+        format: 'cjs',
+      },
+      {
+        name: pkg.name,
+        file: pkg.module,
+        format: 'es',
+      },
+      {
+        name: pkg.name,
+        file: pkg.browser,
         format: 'umd',
         globals: {
           react: 'React',
@@ -64,8 +74,12 @@ export default [
       },
       {
         name: pkg.name,
-        file: pkg.module,
-        format: 'es',
+        file: pkg['browser:min'],
+        format: 'umd',
+        globals: {
+          react: 'React',
+        },
+        plugins: [terser()]
       },
     ],
   },
