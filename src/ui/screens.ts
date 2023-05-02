@@ -65,11 +65,16 @@ export function useScreen(): Screen | undefined {
   }, [getScreen]);
 
   useEffect(() => {
-    defineScreen();
+    if (typeof document !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', defineScreen);
+    }
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', defineScreen);
     }
     return () => {
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('DOMContentLoaded', defineScreen);
+      }
       if (typeof window !== 'undefined') {
         window.removeEventListener('resize', defineScreen);
       }
@@ -83,7 +88,7 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
   const [broke, setBroke] = useState<boolean>(false);
 
   const calcBreakingPoint = useCallback(() => {
-    if (window) {
+    if (typeof window !== 'undefined') {
       if (window.innerWidth <= breakPoint && !broke) {
         setBroke(true);
       } else if (window.innerWidth > breakPoint && broke) {
@@ -93,11 +98,16 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
   }, [breakPoint, broke]);
 
   useEffect(() => {
-    calcBreakingPoint();
+    if (typeof document !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', calcBreakingPoint);
+    }
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', calcBreakingPoint);
     }
     return () => {
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('DOMContentLoaded', calcBreakingPoint);
+      }
       if (typeof window !== 'undefined') {
         window.removeEventListener('resize', calcBreakingPoint);
       }
