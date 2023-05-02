@@ -58,22 +58,17 @@ export function useScreen(): Screen | undefined {
     return '4K';
   }, []);
 
-  const [screen, setScreen] = useState<Screen | undefined>(getScreen());
+  const [screen, setScreen] = useState<Screen | undefined>();
 
   const defineScreen = useCallback(() => {
     setScreen(getScreen());
   }, [getScreen]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('load', defineScreen);
-      window.addEventListener('resize', defineScreen);
-    }
+    window.addEventListener('resize', defineScreen);
+    defineScreen();
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('load', defineScreen);
-        window.removeEventListener('resize', defineScreen);
-      }
+      window.removeEventListener('resize', defineScreen);
     };
   }, [defineScreen]);
 
@@ -84,25 +79,18 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
   const [broke, setBroke] = useState<boolean>(false);
 
   const calcBreakingPoint = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      if (window.innerWidth <= breakPoint && !broke) {
-        setBroke(true);
-      } else if (window.innerWidth > breakPoint && broke) {
-        setBroke(false);
-      }
+    if (window.innerWidth <= breakPoint && !broke) {
+      setBroke(true);
+    } else if (window.innerWidth > breakPoint && broke) {
+      setBroke(false);
     }
   }, [breakPoint, broke]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('load', calcBreakingPoint);
-      window.addEventListener('resize', calcBreakingPoint);
-    }
+    window.addEventListener('resize', calcBreakingPoint);
+    calcBreakingPoint();
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('load', calcBreakingPoint);
-        window.removeEventListener('resize', calcBreakingPoint);
-      }
+      window.removeEventListener('resize', calcBreakingPoint);
     };
   }, [calcBreakingPoint]);
 
