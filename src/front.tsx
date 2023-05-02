@@ -9,6 +9,7 @@ const Context = createContext<FrontState | undefined>(undefined);
 
 export interface FrontProps {
   children?: ReactNode;
+  defaultScreen?: Screen;
 }
 
 export function useFront(): FrontState {
@@ -19,14 +20,14 @@ export function useFront(): FrontState {
   return front;
 }
 
-export function Front({ children }: FrontProps): ReactElement {
+export function Front({ children, defaultScreen }: FrontProps): ReactElement {
   const screen = useScreen();
 
   const value = useMemo<FrontState>(
     () => ({
-      screen,
+      screen: screen || defaultScreen,
     }),
-    [screen],
+    [defaultScreen, screen],
   );
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
