@@ -65,17 +65,13 @@ export function useScreen(): Screen | undefined {
   }, [getScreen]);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.addEventListener('DOMContentLoaded', defineScreen);
-    }
     if (typeof window !== 'undefined') {
+      window.addEventListener('load', defineScreen);
       window.addEventListener('resize', defineScreen);
     }
     return () => {
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('DOMContentLoaded', defineScreen);
-      }
       if (typeof window !== 'undefined') {
+        window.removeEventListener('load', defineScreen);
         window.removeEventListener('resize', defineScreen);
       }
     };
@@ -98,17 +94,13 @@ export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boo
   }, [breakPoint, broke]);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.addEventListener('DOMContentLoaded', calcBreakingPoint);
-    }
     if (typeof window !== 'undefined') {
+      window.addEventListener('load', calcBreakingPoint);
       window.addEventListener('resize', calcBreakingPoint);
     }
     return () => {
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('DOMContentLoaded', calcBreakingPoint);
-      }
       if (typeof window !== 'undefined') {
+        window.removeEventListener('load', calcBreakingPoint);
         window.removeEventListener('resize', calcBreakingPoint);
       }
     };
