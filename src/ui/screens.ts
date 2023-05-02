@@ -23,10 +23,10 @@ export type Screen =
   | 'mobile_M'
   | 'mobile_S';
 
-export function useScreen(): Screen | undefined {
-  const getScreen = useCallback((): Screen | undefined => {
+export function useScreen(): Screen {
+  const getScreen = useCallback((): Screen => {
     if (typeof window === 'undefined') {
-      return undefined;
+      return 'desktop';
     }
 
     const { innerWidth } = window;
@@ -58,7 +58,7 @@ export function useScreen(): Screen | undefined {
     return '4K';
   }, []);
 
-  const [screen, setScreen] = useState<Screen | undefined>(getScreen());
+  const [screen, setScreen] = useState<Screen>(getScreen());
 
   const defineScreen = useCallback(() => {
     setScreen(getScreen());
