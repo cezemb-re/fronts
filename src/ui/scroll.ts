@@ -31,17 +31,13 @@ export function useWindowElementScroll<E extends Element = HTMLElement>(
 
   useEffect(() => {
     calcProgress();
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', calcProgress);
-      window.addEventListener('touchmove', calcProgress);
-      window.addEventListener('resize', calcProgress);
-    }
+    window.addEventListener('scroll', calcProgress);
+    window.addEventListener('touchmove', calcProgress);
+    window.addEventListener('resize', calcProgress);
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', calcProgress);
-        window.removeEventListener('touchmove', calcProgress);
-        window.removeEventListener('resize', calcProgress);
-      }
+      window.removeEventListener('scroll', calcProgress);
+      window.removeEventListener('touchmove', calcProgress);
+      window.removeEventListener('resize', calcProgress);
     };
   });
 
@@ -163,17 +159,13 @@ export function useWindowScroll(): Scroll {
 
   useEffect(() => {
     calcProgress();
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', calcProgress);
-      window.addEventListener('touchmove', calcProgress);
-      window.addEventListener('resize', calcProgress);
-    }
+    window.addEventListener('scroll', calcProgress);
+    window.addEventListener('touchmove', calcProgress);
+    window.addEventListener('resize', calcProgress);
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', calcProgress);
-        window.removeEventListener('touchmove', calcProgress);
-        window.removeEventListener('resize', calcProgress);
-      }
+      window.removeEventListener('scroll', calcProgress);
+      window.removeEventListener('touchmove', calcProgress);
+      window.removeEventListener('resize', calcProgress);
     };
   });
 

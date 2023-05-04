@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useMemo, useState } from 'react';
-import { useWindowInfiniteScroll } from '../src';
+import { useElementInfiniteScroll, useWindowInfiniteScroll } from '../src';
 
 interface Page {
   id: string;
@@ -20,7 +20,7 @@ function Template() {
     });
   }, []);
 
-  const { ref, distance, progress, remains, active } = useWindowInfiniteScroll<HTMLDivElement>({
+  const { ref, distance, progress, remains, active } = useElementInfiniteScroll<HTMLDivElement>({
     loadNextPage,
   });
 
@@ -73,7 +73,7 @@ function Template() {
       <p>Progress: {progress}</p>
       <p>Remains: {remains}</p>
       <p>Active: {active ? 'True' : 'False'}</p>
-      <div ref={ref} style={{ background: 'pink' }}>
+      <div ref={ref} style={{ background: 'pink', height: 400, overflow: 'scroll' }}>
         {book.map(({ id, content }) => (
           <div key={id}>{content}</div>
         ))}
