@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, RefObject, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, RefObject, useMemo, RefCallback } from 'react';
 import { debounce } from 'lodash';
 
 export interface Scroll {
@@ -214,34 +214,37 @@ export function disableBodyScroll() {
 
 export function useElementScroll<E extends Element = HTMLElement>(
   element?: E,
-): { ref: RefObject<E> } & Scroll {
-  const ref = useRef<E>(element || null);
+): { ref: RefCallback<E> } & Scroll {
+  const [internalElement, setInternalElement] = useState<E | null>(element || null);
 
   const [progress, setProgress] = useState<number | undefined>();
   const [distance, setDistance] = useState<number | undefined>();
   const [remains, setRemains] = useState<number | undefined>();
 
   const calcProgress = useCallback(() => {
-    if (ref.current) {
-      setDistance(ref.current.scrollTop);
-      const scrollableDistance = ref.current.scrollHeight - ref.current.clientHeight;
+    if (internalElement) {
+      setDistance(internalElement.scrollTop);
+      const scrollableDistance = internalElement.scrollHeight - internalElement.clientHeight;
       if (scrollableDistance) {
-        setProgress(ref.current.scrollTop / scrollableDistance);
+        setProgress(internalElement.scrollTop / scrollableDistance);
       }
-      setRemains(scrollableDistance - ref.current.scrollTop);
+      setRemains(scrollableDistance - internalElement.scrollTop);
     }
-  }, []);
+  }, [internalElement]);
 
   useEffect(() => {
     calcProgress();
-    const { current } = ref;
-    current?.addEventListener('scroll', calcProgress);
-    current?.addEventListener('touchmove', calcProgress);
+    internalElement?.addEventListener('scroll', calcProgress);
+    internalElement?.addEventListener('touchmove', calcProgress);
     return () => {
-      current?.removeEventListener('scroll', calcProgress);
-      current?.removeEventListener('touchmove', calcProgress);
+      internalElement?.removeEventListener('scroll', calcProgress);
+      internalElement?.removeEventListener('touchmove', calcProgress);
     };
-  }, [calcProgress]);
+  }, [internalElement, calcProgress]);
+
+  const ref = useCallback((_element: E) => {
+    setInternalElement(_element);
+  }, []);
 
   return { ref, progress, distance, remains };
 }
@@ -250,7 +253,7 @@ export function useElementScrollRemainsThreshold<E extends Element = HTMLElement
   element?: E,
   threshold = 100,
   trigger?: () => unknown,
-): { ref: RefObject<E>; active?: boolean } & Scroll {
+): { ref: RefCallback<E>; active?: boolean } & Scroll {
   const [active, setActive] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
 
@@ -300,7 +303,7 @@ export interface InfiniteScrollParams<E extends Element = HTMLElement> {
 export function useElementInfiniteScroll<E extends Element = HTMLElement>(
   params?: InfiniteScrollParams<E>,
 ): {
-  ref: RefObject<E>;
+  ref: RefCallback<E>;
   active?: boolean;
 } & Scroll {
   return useElementScrollRemainsThreshold<E>(

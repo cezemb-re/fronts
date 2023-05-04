@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useMemo, useState } from 'react';
-import { useElementInfiniteScroll, useWindowInfiniteScroll } from '../src';
+import { useElementInfiniteScroll } from '../src';
 
 interface Page {
   id: string;
@@ -14,10 +14,12 @@ function Template() {
   const [pages, setPages] = useState<number>(1);
 
   const loadNextPage = useCallback(() => {
-    setPages((p) => {
-      console.log('New page: ', p + 1);
-      return p + 1;
-    });
+    setTimeout(() => {
+      setPages((p) => {
+        console.log('New page: ', p + 1);
+        return p + 1;
+      });
+    }, 500);
   }, []);
 
   const { ref, distance, progress, remains, active } = useElementInfiniteScroll<HTMLDivElement>({
