@@ -6,7 +6,7 @@ $width-medium: screens.$break-point-tablet;
 $width-small: screens.$break-point-tablet-S;
 $width-tiny: screens.$break-point-tablet-S;
 
-@mixin container($width: $width-wide, $padding: 20px) {
+@mixin container($width: $width-wide, $padding: 10px) {
   width: 100%;
   max-width: $width;
   margin-left: auto;
@@ -16,18 +16,18 @@ $width-tiny: screens.$break-point-tablet-S;
   transition: max-width ease-out 200ms;
 }
 
-@mixin wide($padding: 20px) {
+@mixin wide($padding) {
   @include container($width-wide, $padding);
 }
 
-@mixin large($padding: 20px) {
+@mixin large($padding) {
   @include container($width-large, $padding);
 }
 
-@mixin medium($padding: 20px) {
+@mixin medium($padding) {
   @include container($width-medium, $padding);
 }
 
-@mixin small($padding: 20px) {
+@mixin small($padding) {
   @include container($width-small, $padding);
 }
