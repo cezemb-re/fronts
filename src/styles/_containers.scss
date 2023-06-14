@@ -16,18 +16,18 @@ $width-tiny: screens.$break-point-tablet-S;
   transition: max-width ease-out 200ms;
 }
 
-@mixin wide($padding) {
+@mixin wide($padding: 10px) {
   @include container($width-wide, $padding);
 }
 
-@mixin large($padding) {
+@mixin large($padding: 10px) {
   @include container($width-large, $padding);
 }
 
-@mixin medium($padding) {
+@mixin medium($padding: 10px) {
   @include container($width-medium, $padding);
 }
 
-@mixin small($padding) {
+@mixin small($padding: 10px) {
   @include container($width-small, $padding);
 }
