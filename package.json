@@ -91,6 +91,7 @@
     "prettier": "3.5.3",
     "release-it": "^19.0.1",
     "rimraf": "^6.0.1",
+    "rollup": "^4.40.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-postcss": "^4.0.2",
     "sass": "^1.87.0",
