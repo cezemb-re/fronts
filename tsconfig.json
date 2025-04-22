@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "declaration": true,
+    "declarationDir": "./dist/types",
     "allowJs": true,
     "removeComments": false,
     "strict": true,
@@ -15,7 +16,6 @@
     "esModuleInterop": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "declarationDir": ".",
     "isolatedModules": true,
     "resolveJsonModule": true
   }

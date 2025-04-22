@@ -9,8 +9,8 @@ export interface Scroll {
 
 export function useWindowElementScroll<E extends Element = HTMLElement>(
   element?: E,
-): { ref: RefObject<E> } & Scroll {
-  const ref = useRef<E>(element || null);
+): { ref: RefObject<E | undefined> } & Scroll {
+  const ref = useRef<E>(element);
 
   const [progress, setProgress] = useState<number | undefined>();
   const [distance, setDistance] = useState<number | undefined>();
@@ -47,7 +47,7 @@ export function useWindowElementScroll<E extends Element = HTMLElement>(
 export function useWindowElementScrollProgressThreshold<E extends Element = HTMLElement>(
   threshold = 0.2,
   element?: E,
-): { ref: RefObject<E>; active: boolean } & Scroll {
+): { ref: RefObject<E | undefined>; active: boolean } & Scroll {
   const [active, setActive] = useState(false);
 
   const { ref, progress, distance, remains } = useWindowElementScroll<E>(element);
@@ -68,7 +68,7 @@ export function useWindowElementScrollProgressThreshold<E extends Element = HTML
 export function useWindowElementScrollProgressThresholds<E extends Element = HTMLElement>(
   thresholds = [0.25],
   element?: E,
-): { ref: RefObject<E>; actives: boolean[] } & Scroll {
+): { ref: RefObject<E | undefined>; actives: boolean[] } & Scroll {
   const [actives, setActives] = useState(Array<boolean>(thresholds.length).fill(false));
 
   const { ref, progress, distance, remains } = useWindowElementScroll<E>(element);
@@ -100,7 +100,7 @@ export function useWindowElementScrollRemainsThreshold<E extends Element = HTMLE
   element?: E,
   threshold = 100,
   trigger?: () => unknown,
-): { ref: RefObject<E>; active: boolean } & Scroll {
+): { ref: RefObject<E | undefined>; active: boolean } & Scroll {
   const [active, setActive] = useState(false);
   const [pending, setPending] = useState(false);
 
@@ -316,7 +316,7 @@ export function useElementInfiniteScroll<E extends Element = HTMLElement>(
 export function useWindowInfiniteScroll<E extends Element = HTMLElement>(
   params?: InfiniteScrollParams<E>,
 ): {
-  ref: RefObject<E>;
+  ref: RefObject<E | undefined>;
   active?: boolean;
 } & Scroll {
   return useWindowElementScrollRemainsThreshold<E>(

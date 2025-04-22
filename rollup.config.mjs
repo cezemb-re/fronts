@@ -10,7 +10,7 @@ import copy from 'rollup-plugin-copy';
 import terser from '@rollup/plugin-terser';
 import autoprefixer from 'autoprefixer';
 import postcssUrl from 'postcss-url';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,7 +23,7 @@ const externals = [...Object.keys(dependencies), ...Object.keys(peerDependencies
 const src = path.resolve(__dirname, 'src');
 const input = path.resolve(src, 'index.ts');
 const assets = path.resolve(src, 'assets');
-const dest = path.resolve(__dirname, 'dist');
+const dist = path.resolve(__dirname, 'dist');
 
 export default [
   {
@@ -49,8 +49,8 @@ export default [
       }),
       copy({
         targets: [
-          { src: 'src/**/_*.scss.d.ts', dest },
-          { src: 'src/**/_*.scss', dest },
+          { src: 'src/**/_*.scss.d.ts', dest: dist },
+          { src: 'src/**/_*.scss', dest: dist },
         ],
       }),
     ],
@@ -79,7 +79,7 @@ export default [
         globals: {
           react: 'React',
         },
-        plugins: [terser()]
+        plugins: [terser()],
       },
     ],
   },
