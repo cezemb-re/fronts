@@ -1,4 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+export enum Screen {
+  _4K = 8,
+  DESKTOP = 7,
+  LAPTOP_L = 6,
+  LAPTOP = 5,
+  TABLET = 4,
+  TABLET_S = 3,
+  MOBILE_L = 2,
+  MOBILE_M = 1,
+  MOBILE_S = 0,
+}
 
 export enum BreakPoint {
   _4K = 2560,
@@ -12,17 +24,6 @@ export enum BreakPoint {
   MOBILE_S = 320,
 }
 
-export type Screen =
-  | '4K'
-  | 'desktop'
-  | 'laptop_L'
-  | 'laptop'
-  | 'tablet'
-  | 'tablet_S'
-  | 'mobile_L'
-  | 'mobile_M'
-  | 'mobile_S';
-
 export function useScreen(): Screen | undefined {
   const getScreen = useCallback((): Screen | undefined => {
     if (typeof window === 'undefined') {
@@ -32,30 +33,30 @@ export function useScreen(): Screen | undefined {
     const { innerWidth } = window;
 
     if (innerWidth <= BreakPoint.MOBILE_S) {
-      return 'mobile_S';
+      return Screen.MOBILE_S;
     }
     if (innerWidth <= BreakPoint.MOBILE_M) {
-      return 'mobile_M';
+      return Screen.MOBILE_M;
     }
     if (innerWidth <= BreakPoint.MOBILE_L) {
-      return 'mobile_L';
+      return Screen.MOBILE_L;
     }
     if (innerWidth <= BreakPoint.TABLET_S) {
-      return 'tablet_S';
+      return Screen.TABLET_S;
     }
     if (innerWidth <= BreakPoint.TABLET) {
-      return 'tablet';
+      return Screen.TABLET;
     }
     if (innerWidth <= BreakPoint.LAPTOP) {
-      return 'laptop';
+      return Screen.LAPTOP;
     }
     if (innerWidth <= BreakPoint.LAPTOP_L) {
-      return 'laptop_L';
+      return Screen.LAPTOP_L;
     }
     if (innerWidth <= BreakPoint.DESKTOP) {
-      return 'desktop';
+      return Screen.DESKTOP;
     }
-    return '4K';
+    return Screen._4K;
   }, []);
 
   const [screen, setScreen] = useState<Screen | undefined>();
@@ -73,6 +74,53 @@ export function useScreen(): Screen | undefined {
   }, [defineScreen]);
 
   return screen;
+}
+
+export type ScreenName =
+  | '4K'
+  | 'desktop'
+  | 'laptop_L'
+  | 'laptop'
+  | 'tablet'
+  | 'tablet_S'
+  | 'mobile_L'
+  | 'mobile_M'
+  | 'mobile_S';
+
+export function getScreenName(screen: Screen): ScreenName {
+  switch (screen) {
+    case Screen._4K:
+      return '4K';
+    case Screen.DESKTOP:
+      return 'desktop';
+    case Screen.LAPTOP_L:
+      return 'laptop_L';
+    case Screen.LAPTOP:
+      return 'laptop';
+    case Screen.TABLET:
+      return 'tablet';
+    case Screen.TABLET_S:
+      return 'tablet_S';
+    case Screen.MOBILE_L:
+      return 'mobile_L';
+    case Screen.MOBILE_M:
+      return 'mobile_M';
+    case Screen.MOBILE_S:
+      return 'mobile_S';
+    default:
+      return '4K';
+  }
+}
+
+export function useScreenName(): ScreenName | undefined {
+  const screen = useScreen();
+
+  return useMemo<ScreenName | undefined>(() => {
+    if (!screen) {
+      return undefined;
+    }
+    return getScreenName(screen);
+  }, [screen]);
 }
 
 export function useBreakPoint(breakPoint: BreakPoint = BreakPoint.MOBILE_S): boolean {
