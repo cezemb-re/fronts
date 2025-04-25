@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 export enum Screen {
-  _4K = 8,
-  DESKTOP = 7,
-  LAPTOP_L = 6,
+  _4K = 9,
+  DESKTOP = 8,
+  LAPTOP_L = 7,
+  LAPTOP_M = 6,
   LAPTOP = 5,
   TABLET = 4,
   TABLET_S = 3,
@@ -16,6 +17,7 @@ export enum BreakPoint {
   _4K = 2560,
   DESKTOP = 1800,
   LAPTOP_L = 1440,
+  LAPTOP_M = 1240,
   LAPTOP = 1024,
   TABLET = 768,
   TABLET_S = 596,
@@ -53,6 +55,9 @@ export function useScreen(): Screen | undefined {
     if (innerWidth <= BreakPoint.LAPTOP_L) {
       return Screen.LAPTOP_L;
     }
+    if (innerWidth <= BreakPoint.LAPTOP_M) {
+      return Screen.LAPTOP_M;
+    }
     if (innerWidth <= BreakPoint.DESKTOP) {
       return Screen.DESKTOP;
     }
@@ -80,6 +85,7 @@ export type ScreenName =
   | '4K'
   | 'desktop'
   | 'laptop_L'
+  | 'laptop_M'
   | 'laptop'
   | 'tablet'
   | 'tablet_S'
@@ -95,6 +101,8 @@ export function getScreenName(screen: Screen): ScreenName {
       return 'desktop';
     case Screen.LAPTOP_L:
       return 'laptop_L';
+    case Screen.LAPTOP_M:
+      return 'laptop_M';
     case Screen.LAPTOP:
       return 'laptop';
     case Screen.TABLET:

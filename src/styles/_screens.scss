@@ -1,6 +1,7 @@
 $break-point-fourK: 2560px;
 $break-point-desktop: 1800px;
 $break-point-laptop-L: 1440px;
+$break-point-laptop-M: 1240px;
 $break-point-laptop: 1024px;
 $break-point-tablet: 768px;
 $break-point-tablet-S: 596px;
@@ -22,6 +23,12 @@ $break-point-mobile-S: 320px;
 
 @mixin laptop-L() {
   @media all and (max-width: $break-point-laptop-L) {
+    @content;
+  }
+}
+
+@mixin laptop-M() {
+  @media all and (max-width: $break-point-laptop-M) {
     @content;
   }
 }
